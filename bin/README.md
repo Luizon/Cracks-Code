@@ -1,1 +1,0 @@
-# editor de codigo de los cracks

@@ -27,7 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.JTextPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,11 +37,11 @@ import estructuraDeDatos.ListaDoble;
 
 public class Vista extends JFrame {
 	public JMenuBar barraDelMenu;
-	public JMenu menuArchivo, menuCompilar;
-	public JMenuItem nuevoArchivo, cargarArchivo, guardarArchivo, guardarComo, salir, compilarCodigo;
+	public JMenu menuArchivo, menuCompilar, menuOpciones, menuArchivosRecientes;
+	public JMenuItem nuevoArchivo, cargarArchivo, guardarArchivo, guardarComo, salir, compilarCodigo, cambiarTema;
 	public JTabbedPane codigo;
 	public JTabbedPane consola;
-	public ListaDoble<JTextArea> txtCodigo;
+	public ListaDoble<JTextPane> txtCodigo;
 	public ListaDoble<File> codigoTemporal;
 	public ListaDoble<String> rutaDeArchivoActual, nombreDelArchivo, tituloVentana;
 	public ListaDoble<Integer> tamañoTextoDelEditor;
@@ -54,8 +55,16 @@ public class Vista extends JFrame {
 	public int tab = 0;
 	public boolean teclaControl = false, teclaShift = false; // esto es para la combinación de teclas
 	public boolean teclaAlt = false, hayError = false;
+	public int tema = Theme.CLARO;
+	public Vista(int tema) {
+		this.tema = tema;
+		constructor();
+	}
 	public Vista() {
 		super("CRACK'S Code");
+		constructor();
+	}
+	public void constructor() {
 		hazInterfaz();
 		agregaEscuchadores();
 		codigo.setSelectedIndex(1);
@@ -87,29 +96,38 @@ public class Vista extends JFrame {
 	private void creaMenu() {
 		menuArchivo = new JMenu("Archivo");
 		menuCompilar = new JMenu("Compilar");
+		menuOpciones = new JMenu("Opciones");
 		barraDelMenu.add(menuArchivo);
 		barraDelMenu.add(menuCompilar);
+		barraDelMenu.add(menuOpciones);
 		
 		nuevoArchivo = new JMenuItem("Nuevo archivo (ctrl+N)");
 		cargarArchivo = new JMenuItem("Cargar archivo (ctrl+O)");
 		guardarArchivo = new JMenuItem("Guardar archivo (ctrl+S)");
 		guardarComo = new JMenuItem("Guardar archivo como (ctrl+shift+S)");
+		menuArchivosRecientes = new JMenu("Archivos Recientes");
 		salir = new JMenuItem("Salir (alt+F4)");
 		compilarCodigo = new JMenuItem("Compilar código (F5)");
+		cambiarTema = new JMenuItem("Cambiar de tema");
 		
 		menuArchivo.add(nuevoArchivo);
 		menuArchivo.add(cargarArchivo);
 		menuArchivo.add(guardarArchivo);
 		menuArchivo.add(guardarComo);
+		menuArchivo.add(menuArchivosRecientes);
+			menuArchivosRecientes.add(new JMenuItem("Aqui iria una dirección"));
+			menuArchivosRecientes.add(new JMenuItem("Aqui otra"));
+			menuArchivosRecientes.add(new JMenuItem("Asi es"));
 		menuArchivo.add(salir);
 		menuCompilar.add(compilarCodigo);
+		menuOpciones.add(cambiarTema);
 	}
 	private void crearPestañas() {
 		codigo = new JTabbedPane();
 		ImageIcon iconoNuevoTab = new ImageIcon("src/images/pestañaNueva.png");
 		codigo.insertTab("", iconoNuevoTab, null, "Nueva pestaña", 0);
-		txtCodigo = new ListaDoble<JTextArea>();
-		txtCodigo.insertar(new JTextArea(), 0);
+		txtCodigo = new ListaDoble<JTextPane>();
+		txtCodigo.insertar(new JTextPane(), 0);
 		txtCodigo.getInicio().dato.setFont(new Font("Consolas", Font.PLAIN, 16));
 		codigo.addTab("Eo", new JScrollPane(txtCodigo.getInicio().dato));
 		codigo.setTabComponentAt(1, new Cross("Código"));
@@ -212,7 +230,7 @@ public class Vista extends JFrame {
 		tokens.setFont(new Font("Consolas", Font.PLAIN, 16));
 		JScrollPane pestañaConsola = new JScrollPane(tokens);
 		JScrollPane pestañaDatos = new JScrollPane(tablaDatos);
-		JPanel info = new JPanel();
+f		JPanel info = new JPanel();
 		infoEtiqueta = new JLabel(HTML);
 		info.add(infoEtiqueta);
 		consola.addTab("Info", new JScrollPane(info));
@@ -262,6 +280,8 @@ public class Vista extends JFrame {
 				salir.addActionListener(escuchadores);
 			// Compilar
 				compilarCodigo.addActionListener(escuchadores);
+			// Opciones
+				cambiarTema.addActionListener(escuchadores);
 			
 		// Cambio entre pestañas
 			infoEtiqueta.addAncestorListener(escuchadores);
@@ -275,7 +295,7 @@ public class Vista extends JFrame {
 	}
 	public void nuevaPestaña(String texto, String ruta, String nombre, int tamaño) {
 		int tab = codigo.getTabCount() - 1;
-		txtCodigo.insertar(new JTextArea(), tab);
+		txtCodigo.insertar(new JTextPane(), tab);
 		txtCodigo.getByIndex(tab).dato.setText(texto);
 		txtCodigo.getByIndex(tab).dato.setFont(new Font("Consolas", Font.PLAIN, 16));
 		txtCodigo.getByIndex(tab).dato.addKeyListener(escuchadores);
@@ -357,6 +377,7 @@ public class Vista extends JFrame {
 			nuevaPestaña(texto, fichero.getPath(), fichero.getName(), codigo.getSelectedIndex());
 			setTitle(nombreDelArchivo.getByIndex(tab).dato + " - " + rutaDeArchivoActual.getByIndex(tab).dato + " - CRACK'S Code");
 			tituloVentana.getByIndex(tab).dato = getTitle();
+			
 			}
 		}
         catch(FileNotFoundException e) {
@@ -376,7 +397,7 @@ public class Vista extends JFrame {
 				index = codigo.getSelectedIndex() -1;
 			else
 				index = codigo.getSelectedIndex();
-			JTextArea codigoEnPestaña = txtCodigo.getByIndex(index).dato;
+			JTextPane codigoEnPestaña = txtCodigo.getByIndex(index).dato;
 			String str = codigoEnPestaña.getDocument().getText(0, codigoEnPestaña.getText().length());
 			String salida = "", aux = "";
 			while(str.length()>0) { // mientras haya elementos en el texto para añadir al archivo

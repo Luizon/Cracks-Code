@@ -14,13 +14,14 @@ import java.io.PrintWriter;
 
 import javax.print.attribute.HashAttributeSet;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.table.DefaultTableModel;
 
+import interfaz.Theme;
 import interfaz.Vista;
 
 public class Escuchadores implements ActionListener, KeyListener, WindowListener, AncestorListener, MouseListener, CaretListener {
@@ -181,7 +182,7 @@ public class Escuchadores implements ActionListener, KeyListener, WindowListener
 						vista.consola.setSelectedIndex(0);
 				else
 					for(int i=0; i<vista.tab; i++) {
-						final JTextArea aux = vista.txtCodigo.getByIndex(vista.codigo.getSelectedIndex()-1).dato;
+						final JTextPane aux = vista.txtCodigo.getByIndex(vista.codigo.getSelectedIndex()-1).dato;
 						aux.setText(aux.getText()+"\t");
 					}
 			break;
@@ -278,6 +279,16 @@ public class Escuchadores implements ActionListener, KeyListener, WindowListener
 					Object datostabla[]= {id.tipo,id.nombre,id.valor};
 					vista.modelo.addRow(datostabla);
 				}
+			}
+			return;
+		}
+		if(evt.getSource() == vista.cambiarTema) {
+			if(vista.tema == Theme.CLARO) {
+				vista.tema = Theme.OSCURO;
+				Theme.darkTheme(vista);
+			} else if(vista.tema == Theme.OSCURO) {
+				vista.tema = Theme.CLARO;
+				Theme.lightTheme(vista);
 			}
 			return;
 		}
