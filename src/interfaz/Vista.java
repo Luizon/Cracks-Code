@@ -230,7 +230,7 @@ public class Vista extends JFrame {
 		tokens.setFont(new Font("Consolas", Font.PLAIN, 16));
 		JScrollPane pestañaConsola = new JScrollPane(tokens);
 		JScrollPane pestañaDatos = new JScrollPane(tablaDatos);
-f		JPanel info = new JPanel();
+		JPanel info = new JPanel();
 		infoEtiqueta = new JLabel(HTML);
 		info.add(infoEtiqueta);
 		consola.addTab("Info", new JScrollPane(info));
