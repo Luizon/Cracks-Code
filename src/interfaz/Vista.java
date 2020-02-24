@@ -127,7 +127,9 @@ public class Vista extends JFrame {
 		ImageIcon iconoNuevoTab = new ImageIcon("src/images/pestañaNueva.png");
 		codigo.insertTab("", iconoNuevoTab, null, "Nueva pestaña", 0);
 		txtCodigo = new ListaDoble<JTextPane>();
-		txtCodigo.insertar(new JTextPane(), 0);
+		JTextPane cajaDeTexto = new JTextPane();
+		txtCodigo.insertar(cajaDeTexto, 0);
+		Theme.changeTheme(cajaDeTexto, tema);
 		txtCodigo.getInicio().dato.setFont(new Font("Consolas", Font.PLAIN, 16));
 		codigo.addTab("Eo", new JScrollPane(txtCodigo.getInicio().dato));
 		codigo.setTabComponentAt(1, new Cross("Código"));
@@ -295,7 +297,9 @@ public class Vista extends JFrame {
 	}
 	public void nuevaPestaña(String texto, String ruta, String nombre, int tamaño) {
 		int tab = codigo.getTabCount() - 1;
-		txtCodigo.insertar(new JTextPane(), tab);
+		JTextPane cajaDeTexto = new JTextPane();
+		Theme.changeTheme(cajaDeTexto, tema);
+		txtCodigo.insertar(cajaDeTexto, tab);
 		txtCodigo.getByIndex(tab).dato.setText(texto);
 		txtCodigo.getByIndex(tab).dato.setFont(new Font("Consolas", Font.PLAIN, 16));
 		txtCodigo.getByIndex(tab).dato.addKeyListener(escuchadores);

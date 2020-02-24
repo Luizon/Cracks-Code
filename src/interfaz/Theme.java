@@ -2,12 +2,10 @@ package interfaz;
 
 import java.awt.Color;
 
-import javax.swing.text.AttributeSet;
+import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 public class Theme {
@@ -17,47 +15,42 @@ public class Theme {
 	static private final Color ALMOST_WHITE = new Color(215, 215, 215);
 	static private final Color AZUL_CLARO = new Color(184, 207, 229);
 	public static void darkTheme(Vista v) {
-		for (int i=0; i<v.codigo.getTabCount(); i++) {
-			v.txtCodigo.getByIndex(i).dato.setBackground(NEGRO);
-			v.txtCodigo.getByIndex(i).dato.setCaretColor(Color.WHITE);
-			v.txtCodigo.getByIndex(i).dato.setSelectionColor(Color.GRAY);
-			v.txtCodigo.getByIndex(i).dato.setSelectedTextColor(Color.BLACK);
-
-			StyledDocument doc = v.txtCodigo.getByIndex(i).dato.getStyledDocument();
-	        Style style = v.txtCodigo.getByIndex(i).dato.addStyle("I'm a Style", null);
-	        StyleConstants.setForeground(style, ALMOST_WHITE);
-	        String aux = v.txtCodigo.getByIndex(i).dato.getText();
-	        v.txtCodigo.getByIndex(i).dato.setText("");
-	        try { doc.insertString(0, aux, style);}
-	        catch (BadLocationException e){}
-	        
-//	        StyleContext sc = StyleContext.getDefaultStyleContext();
-//	        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.WHITE);
-//	        v.txtCodigo.getByIndex(i).dato.setCharacterAttributes(aset, false);
-
-			v.txtCodigo.getByIndex(i).dato.update(v.txtCodigo.getByIndex(i).dato.getGraphics());
+		for (int i=1; i<v.codigo.getTabCount(); i++) {
+			changeTheme(v.txtCodigo.getByIndex(i).dato, OSCURO);
 		}
 	}
 	public static void lightTheme(Vista v) {
-		for (int i=0; i<v.codigo.getTabCount(); i++) {
-			v.txtCodigo.getByIndex(i).dato.setBackground(BLANCO);
-			v.txtCodigo.getByIndex(i).dato.setCaretColor(Color.BLACK);
-			v.txtCodigo.getByIndex(i).dato.setSelectionColor(AZUL_CLARO);
-			v.txtCodigo.getByIndex(i).dato.setSelectedTextColor(Color.BLACK);
-
-			StyledDocument doc = v.txtCodigo.getByIndex(i).dato.getStyledDocument();
-			Style style = v.txtCodigo.getByIndex(i).dato.addStyle("I'm a Style", null);
-			StyleConstants.setForeground(style, Color.BLACK);
-	        String aux = v.txtCodigo.getByIndex(i).dato.getText();
-	        v.txtCodigo.getByIndex(i).dato.setText("");
-	        try { doc.insertString(0, aux, style);}
-			catch (BadLocationException e){}
-			
-//			StyleContext sc = StyleContext.getDefaultStyleContext();
-//			AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLACK);
-//			v.txtCodigo.getByIndex(i).dato.setCharacterAttributes(aset, false);
-			
-			v.txtCodigo.getByIndex(i).dato.update(v.txtCodigo.getByIndex(i).dato.getGraphics());
+		for (int i=0; i<v.codigo.getTabCount()-1; i++) {
+			changeTheme(v.txtCodigo.getByIndex(i).dato, CLARO);
 		}
+	}
+	public static void changeTheme(JTextPane panel, int tema) {
+		final Color colorBack  =  (tema == CLARO)?BLANCO    :NEGRO,
+				  colorCaret   =  (tema == CLARO)?NEGRO     :BLANCO,
+				  colorSelection= (tema == CLARO)?AZUL_CLARO:Color.GRAY,
+				  colorForeground=(tema == CLARO)?NEGRO     :ALMOST_WHITE;
+		panel.setBackground(colorBack);
+		panel.setCaretColor(colorCaret);
+		panel.setSelectionColor(colorSelection);
+		panel.setSelectedTextColor(NEGRO);
+
+		StyledDocument doc = panel.getStyledDocument();
+        Style style = panel.addStyle("I'm a Style", null);
+        StyleConstants.setForeground(style, colorForeground);
+        String aux = panel.getText();
+        panel.setText("");
+        try {
+        	doc.insertString(0, aux.length()>0?aux:" ", style);
+        	if(aux.length()==0)
+        		panel.setText("");
+        }
+        catch (BadLocationException e)
+        {}
+        
+//        StyleContext sc = StyleContext.getDefaultStyleContext();
+//        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.WHITE);
+//        panel.setCharacterAttributes(aset, false);
+
+		panel.update(panel.getGraphics());
 	}
 }
