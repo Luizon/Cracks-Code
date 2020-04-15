@@ -1,4 +1,4 @@
-package compilador;
+package viejoCompilador;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -25,8 +25,9 @@ public class Analizador
 		this.vista = vista;
 		analisaCodigo(ruta);
 		boolean band = true;
+		int tab = vista.codigoTabs.getSelectedIndex();
 		if(vista != null)
-			if(vista.txtCodigo.getByIndex(vista.codigo.getSelectedIndex()-1).dato.getText().length() == 0) {
+			if(vista.txtCodigo.getByIndex(tab).dato.getText().length() == 0) {
 				band = false;
 				impresion.add("Código vacío");
 				vista.hayError = false;

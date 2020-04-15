@@ -1,6 +1,8 @@
 package estructuraDeDatos;
 
-public class ListaDoble<E>{
+import java.io.Serializable;
+
+public class ListaDoble<E> implements Serializable {
 	private NodoDoble <E>Inicio;
 	private NodoDoble <E>Fin;
 	private int size=0;
@@ -9,11 +11,6 @@ public class ListaDoble<E>{
 	}
 	public int length(){
 		return size;
-	}
-	public void insertar(E dato, int index) {
-		insertar(dato);
-		NodoDoble<E> nodo = Fin;
-		nodo.index = index + 1;
 	}
 	public void insertar(E dato){
 		NodoDoble<E>nuevo = new NodoDoble<E>(dato);
@@ -26,6 +23,7 @@ public class ListaDoble<E>{
 			nuevo.anterior=Fin;
 		}
 		Fin=nuevo;
+		nuevo.index = size;
 		size++;
 	}
 	public void mostrar() {
@@ -51,28 +49,27 @@ public class ListaDoble<E>{
 		return Inicio;
 	}
 	public NodoDoble<E> getByIndex(int n) {
+		if(Inicio == null)
+			return null;
 		if(Inicio.siguiente == null)
-			if(n<2)
+			if(n == 0)
 				return Inicio;
 			else
 				return null;
-		if(n>size || n<0)
+		if(n>size-1 || n<0)
 			return null;
-		else {
-			int aux = 0;
-			NodoDoble<E> nodo = Inicio;
-			while(aux<n) {
-				nodo = nodo.siguiente;
-				aux++;
-			}
-			return nodo;
+
+		NodoDoble<E> nodo = Inicio;
+		for(int i=0; i<n; i++) {
+			nodo = nodo.siguiente;
 		}
+		return nodo;
 	}
 	public void borrar(int n) {
 		NodoDoble<E> Tra=Inicio, Ant=null;
-		int cont=1, r=0; //cont indicará en que posición se encontró, r si se encontró o no el resultado
+		int cont=0, r=0; //cont indicará en que posición se encontró, r si se encontró o no el resultado
 		while (Tra!=null) {
-			if (cont == n+1) {
+			if (cont == n) {
 				r=1;
 				break;
 			}
@@ -80,7 +77,7 @@ public class ListaDoble<E>{
 			Tra=Tra.siguiente;
 			cont++;
 		}
-		if (r==1) {
+		if (r==1) { // se encontró
 			if (Inicio==Fin)
 				Inicio=Fin=null;
 			else
@@ -100,20 +97,20 @@ public class ListaDoble<E>{
 			if (r==0)
 				System.out.println("No se encontró.");
 			else {
-				System.out.println("Elemento "+Tra.dato+" de la posición "+(cont+1)+" eliminado.");
+				System.out.println("Elemento "+Tra.dato+" de la posición " + cont + " eliminado.");
 			}
 		size--;
 	}
 	public String toString() {
-		String text = "inicio[";
+		String text = "\n[\n";
 		NodoDoble<E> asd = Inicio;
 		while(asd != null) {
-			text+= asd.dato;
+			text+= "\t"+asd.dato;
 			if(asd.siguiente != null)
 				text+= ",\n";
 			asd = asd.siguiente;
-			if(asd == Fin)
-				text+= "]final";
+			if(asd == null)
+				text+= "\n]";
 		}
 		return text;
 	}

@@ -1,10 +1,10 @@
-package compilador;
+package viejoCompilador;
 
 public class Identificador {
 
-	String nombre;
-	String valor;
-	String tipo;
+	public String nombre;
+	public String valor;
+	public String tipo;
 	
 	public Identificador(String nombre, String valor, String tipo) {
 		super();
