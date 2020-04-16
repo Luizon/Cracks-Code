@@ -91,6 +91,11 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			case KeyEvent.VK_F3:
 				vista.bottomTabs.setSelectedIndex(1);
 				break;
+			case KeyEvent.VK_F5:
+				vista.compilarCodigo.doClick();
+				teclaControl = false;
+				teclaShift = false;
+				break;
 			case KeyEvent.VK_F11:
 				vista.cambiarTema.doClick();
 				break;
@@ -104,11 +109,6 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				else {
 		            vista.setExtendedState(Frame.MAXIMIZED_BOTH);
 		        }
-				break;
-			case KeyEvent.VK_F5:
-				vista.compilarCodigo.doClick();
-				teclaControl = false;
-				teclaShift = false;
 				break;
 			case KeyEvent.VK_N:
 				if(teclaControl) {
