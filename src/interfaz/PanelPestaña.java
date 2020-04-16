@@ -65,6 +65,7 @@ public class PanelPestaña extends JPanel implements MouseListener {
 		    
 		    JPanel espacio = new JPanel();
 		    espacio.setPreferredSize(new Dimension(0, 5));
+		    espacio.setOpaque(false);
 		    espacio.setBackground(null);
 		    add(espacio);
 		    gbc.gridy++;
