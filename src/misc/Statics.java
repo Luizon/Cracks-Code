@@ -1,12 +1,40 @@
 package misc;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
 public class Statics {
+	public static String [] tipoDeToken = {
+		"Modificador", // 0
+		"Palabra resevada", // 1
+		"Tipo de dato", // 2
+		"Signo", // 3
+		"Operador logico", // 4
+		"Operador aritmetico", // 5
+		"Booleano", // 6
+		"Clase", //7
+		"Identificador", // 8
+		"Cadena", //9
+		"Entero", //10
+	};
+	public static String[] // basado en el viejo compilador
+		modificador = {"public", "private"}, // 0
+		palabraReservada = {"if","while"}, // 1
+		tipoDeDato = {"int", "string", "boolean"}, // 2
+		signo = {"(",")","{","}","=",";"}, // 3
+		operadorLogico = {"<","<=",">",">=","==","!="}, // 4
+		operadorAritmetico = {"+","-","*","/"}, // 5
+		booleano = {"true","false"}; // 6
+	public static String clase = "class"; // 7
+	public static String consolaCss =
+			"strong {" // para destacar el token, en el error
+			+ "	font-style: italic;"
+			+ "}"
+			+ "p {" // para el error
+			+ "	color: #DD0000"
+			+ "}";
+	
 	public static String getHTML(String body, String css) {
 		String output =	
 				"<html>"

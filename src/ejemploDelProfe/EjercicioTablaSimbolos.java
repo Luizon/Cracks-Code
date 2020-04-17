@@ -6,13 +6,9 @@ import java.util.HashMap;
  * @author Rodrigo
  */
 public class EjercicioTablaSimbolos {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        HashMap<String,TablaSimbolo> tablaSimbolos = new HashMap<String,TablaSimbolo>();
-        TablaSimbolo simboloAtributos; 
+        HashMap<String,TuplaSimbolo> tablaSimbolos = new HashMap<String,TuplaSimbolo>();
+        TuplaSimbolo simboloAtributos; 
         //int a = 111;
         //int a;
         //int b = 222;
@@ -22,20 +18,17 @@ public class EjercicioTablaSimbolos {
         //a= b*x;
         //z= x;
         
-        tablaSimbolos.put("a", new TablaSimbolo("a", "Operando", "Entero", 1,"111"));
+        tablaSimbolos.put("a", new TuplaSimbolo("a", "Operando", "Entero", 1,"111"));
+        tablaSimbolos.put("b", new TuplaSimbolo("b", "Operando", "Entero", 2, "222"));
+        tablaSimbolos.put("c", new TuplaSimbolo("c", "Operando", "Entero", 3, "333"));
+        tablaSimbolos.put("x", new TuplaSimbolo("x", "Operando", "String", 4, "Rodrigo"));
         
-        tablaSimbolos.put("b", new TablaSimbolo("b", "Operando", "Entero", 2, "222"));
-        
-        tablaSimbolos.put("c", new TablaSimbolo("c", "Operando", "Entero", 3, "333"));
-        
-        tablaSimbolos.put("x", new TablaSimbolo("x", "Operando", "String", 4, "Rodrigo"));
-        
-       int columna1 = 20,
-    		   columna2 = 15,
-    		   columna3 = 15,
-    		   columna4 = 15,
-    		   columna5 = 15;
-       int [] tamañoColumnas = new int[] {columna1, columna2, columna3, columna4, columna5};
+	   int columna1 = 20,
+		   columna2 = 15,
+		   columna3 = 15,
+		   columna4 = 15,
+		   columna5 = 15;
+	   int [] tamañoColumnas = new int[] {columna1, columna2, columna3, columna4, columna5};
 
        // poner cabezal de la tabla
        	ponCabecera(new String[]{"Simbolo", "Valor", "Posición", "Rol", "Tipo"}, tamañoColumnas);
@@ -124,7 +117,7 @@ public class EjercicioTablaSimbolos {
          System.out.println();
     }
     
-    static public void añadeTupla(TablaSimbolo simboloAtributos, int[] tamañoColumnas) {
+    static public void añadeTupla(TuplaSimbolo simboloAtributos, int[] tamañoColumnas) {
         System.out.println("|"+ponEspacios(simboloAtributos.getSimbolo(), tamañoColumnas[0])
         		+"|"+ponEspacios(simboloAtributos.getValor(), tamañoColumnas[1])
         		+"|"+ponEspacios(simboloAtributos.getPosicion()+"", tamañoColumnas[2])

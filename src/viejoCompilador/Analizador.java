@@ -8,6 +8,7 @@ import estructuraDeDatos.ListaDoble;
 import estructuraDeDatos.NodoDoble;
 import estructuraDeDatos.Token;
 import interfaz.Vista;
+import misc.Statics;
 public class Analizador
 {
 	int renglon=1,columna=1;
@@ -17,13 +18,20 @@ public class Analizador
 	Token vacio=new Token("", 9,0,0);//Utilizo esto para identificar el final en mi lista doble
 	boolean bandera=true;//para saber si hubo un error léxico
 	Vista vista;
+	String  css =
+		"strong {"
+		+ "	font-style: italic;"
+		+ "}"
+		+ "p {"
+		+ "	color: #DD0000"
+		+ "}";
 	
 	public ArrayList<Identificador> getIdenti() {
 		return identi;
 	}
 	public Analizador(String ruta, Vista vista) {//Recibe el nombre del archivo de texto y la pantalla con que trabajamos
 		this.vista = vista;
-		analisaCodigo(ruta);
+		analizaCodigo(ruta);
 		boolean band = true;
 		int tab = vista.codigoTabs.getSelectedIndex();
 		if(vista != null)
@@ -35,8 +43,6 @@ public class Analizador
 		if(band) {
 			if(bandera) {//Si la bandera sigue true quiere decir que no hay errores
 				impresion.add("No hay errores lexicos");
-//				analSintactico.analisis(tokens.getFin());//Y mando analizar sintacticamente los token
-//				analisisSintactico(tokens.getFin());//Y mando analizar sintacticamente los token
 				analisisSintactio(tokens.getInicio());//Y mando analizar sintacticamente los token
 			}
 			else
@@ -55,7 +61,7 @@ public class Analizador
 			}
 		}
 	}
-	public void analisaCodigo(String ruta) {//Recibe la ruta del archivo
+	public void analizaCodigo(String ruta) {//Recibe la ruta del archivo
 		String linea="", token="";
 		StringTokenizer tokenizer;
 		try {
@@ -115,7 +121,7 @@ public class Analizador
 			if(band)
 				tipo = 7;
 			else {
-				impresion.add("<HTML><p style=\"color: #DD0000;\">Error en el token <strong style=\"font-style: italic;\">"+token+"</strong>"); //Es un error y guardo el donde se produjo el error
+				impresion.add(Statics.getHTML("<p>Error en el token <strong>"+token+"</strong>",  css)); //Es un error y guardo el donde se produjo el error
 				bandera = false;
 				return;
 			}
@@ -151,12 +157,12 @@ public class Analizador
 			case 0://Modificador
 				int sig=tokensig.getTipo();
 				if(sig!=2 && sig!=8)//Tipo de dato, clase comparamos
-					impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esparaba un tipo de dato o indentificacion de clase");
+					impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esparaba un tipo de dato o indentificacion de clase", css));
 				break;
 			case 1://Palabra reservada
 				if(aux.getValor().equals("if") || aux.getValor().equals("while")) {
 					if(!tokensig.getValor().equals("(")) {
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esperaba un (");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esperaba un (", css));
 					}
 				}
 				break;
@@ -165,47 +171,47 @@ public class Analizador
 				switch(aux.getValor()) {
 				case "}":
 					if(cuenta("{")!=cuenta("}"))
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> falta un {");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> falta un {", css));
 					break;
 				case "{":
 					if(cuenta("{")!=cuenta("}"))
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> falta un }");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> falta un }", css));
 					break;
 				case "(":
 					if(cuenta("(")!=cuenta(")"))
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> falta un )");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> falta un )", css));
 					else
 					{
 						if(!((nodo.anterior.dato.getValor().equals("if") || nodo.anterior.dato.getValor().equals("while")) && (esNumeroValido(tokensig.getValor()) || tokensig.getTipo()==7))) {
-							impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esperaba un valor");
+							impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esperaba un valor", css));
 						}
 					}
 					break;
 				case ")":
 					if(cuenta("(")!=cuenta(")"))
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> falta un (");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> falta un (", css));
 					else {
 						if(esNumeroValido(nodo.anterior.dato.getValor()) || nodo.anterior.dato.getTipo()==7) {
 							if(nodo.siguiente!=null) {
 								if(!nodo.siguiente.dato.getValor().equals("{")) {
-									impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> faltan llaves después de la sentencia if");
+									impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> faltan llaves después de la sentencia if", css));
 								}
 							}
 							else 
-								impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> faltan llaves después de la sentencia if");
+								impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> faltan llaves después de la sentencia if", css));
 						}
 					}
 					break;
 				case "=":
 					if(nodo.anterior.dato.getTipo()==7) {
 						if(tokensig.getTipo()!=6)
-							impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esperaba una constante");
+							impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esperaba una constante", css));
 						else {
 							boolean añadir = true;
 							if(!nodo.siguiente.siguiente.dato.getValor().equals(";")) {
 								if(!(esNumeroValido(tokensig.getValor()) && nodo.siguiente.siguiente.dato.getTipo()==5 && esNumeroValido(nodo.siguiente.siguiente.siguiente.dato.getValor()) && nodo.siguiente.siguiente.siguiente.siguiente.dato.getValor().equals(";"))) {
-									impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> expresión aritmética inválida en <strong style=\"font-style: italic;\">" + nodo.anterior.dato.getValor() + "</strong>."
-											+ "<br>&nbsp;&nbsp;&nbsp;&nbsp;Sólo se puede realizar una operación aritmética por instrucción"); //&nbsp; es un espacio en HTML
+									impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> expresión aritmética inválida en <strong>" + nodo.anterior.dato.getValor() + "</strong>."
+											+ "<br>&nbsp;&nbsp;&nbsp;&nbsp;Sólo se puede realizar una operación aritmética por instrucción", css)); //&nbsp; es un espacio en HTML
 									añadir = false;
 								}
 							}
@@ -214,15 +220,15 @@ public class Analizador
 									identi.add(new Identificador(nodo.anterior.dato.getValor(),tokensig.getValor(),nodo.anterior.anterior.dato.getValor()));
 						}
 					}else
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esperaba un identificador");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esperaba un identificador", css));
 					break;
 				}
 				break;
 			case 4://Operador logico
 				if(nodo.anterior.dato.getTipo()!=6 && nodo.anterior.dato.getTipo()!=7) 
-					impresion.add("<HTML><p style=\"color: #DD0000; \">Error sinatactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esperaba una constante");
+					impresion.add(Statics.getHTML("Error sinatactico en el token <strong>"+aux.getValor()+"</strong> se esperaba una constante", css));
 				if(tokensig.getTipo()!=6 && nodo.siguiente.dato.getTipo()!=7)
-					impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esperaba una constante");
+					impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esperaba una constante", css));
 				break;
 			case 5:
 				if(!esNumeroValido(nodo.siguiente.dato.getValor()) && nodo.siguiente.dato.getTipo()!=7)
@@ -231,7 +237,7 @@ public class Analizador
 			case 6://Constante
 				if(nodo.anterior.dato.getValor().equals("="))
 					if(tokensig.getTipo()!=5 && tokensig.getTipo()!=6 && !tokensig.getValor().equals(";"))
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> asignacion no valida");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> asignacion no valida", css));
 				break;
 			case 7://Identificador
 				if(nodo.siguiente!=null && nodo.anterior!=null) {
@@ -239,23 +245,23 @@ public class Analizador
 							|| (nodo.siguiente.dato.getValor().equals(")") && nodo.anterior.dato.getTipo() == 4))
 						break;
 					if(!(Arrays.asList("{","=",";").contains(tokensig.getValor()))) 
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esparaba un simbolo");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esparaba un simbolo", css));
 					else
 						if(nodo.anterior.dato.getValor().equals("class")){
 							if(nodo.siguiente.dato.getValor().equals("{"))
 								identi.add(new Identificador(aux.getValor(), "", "class"));
 							else
-								impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esparaba un {");
+								impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esparaba un {", css));
 						}
 				}
 				else
-					impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong>, instrucción incorrecta");
+					impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong>, instrucción incorrecta", css));
 				break;
 			case 8://Definicion de clase
 				if(nodo.anterior!=null)
 				if(nodo.anterior.dato.getTipo()==0) {
 					if(tokensig.getTipo()!=7) 
-						impresion.add("<HTML><p style=\"color: #DD0000; \">Error sintactico en el token <strong style=\"font-style: italic;\">"+aux.getValor()+"</strong> se esparaba un identificador");
+						impresion.add(Statics.getHTML("Error sintactico en el token <strong>"+aux.getValor()+"</strong> se esparaba un identificador", css));
 				}
 				break;
 			}

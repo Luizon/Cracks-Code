@@ -238,10 +238,10 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 			int tabs = vista.getSelectedTab();
 			try {
-				String texto = vista.txtCodigo.getByIndex(tabs).dato.getDocument().getText(0, vista.txtCodigo.getByIndex(tabs).dato.getText().length());
+				String texto = vista.txtCodigo.getByIndex(tabs).dato.getText();
 				Statics.guardarArchivo(vista.codigoTemporal.getByIndex(tabs).dato.getPath(), texto);
 				Analizador anal = new Analizador(vista.codigoTemporal.getByIndex(tabs).dato.getPath(), vista);
-				vista.tokens.setListData(anal.getmistokens().toArray( new String [0]));
+				vista.consola.setListData(anal.getmistokens().toArray( new String [0]));
 				vista.modelo = new DefaultTableModel(new Object[0][0],vista.tituloTabla);
 				vista.tablaDatos.setModel(vista.modelo);
 				for (int i = anal.getIdenti().size()-1; i >=0; i--) {
@@ -335,7 +335,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 
 	@Override
 	public void ancestorAdded(AncestorEvent a) {
-		Object consola = vista.tokens,
+		Object consola = vista.consola,
 			datos = vista.tablaDatos;
 		if(a.getSource().equals(consola) || a.getSource().equals(datos))
 			if(vista.hayError) {

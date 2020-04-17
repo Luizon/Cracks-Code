@@ -3,16 +3,16 @@ package ejemploDelProfe;
 /**
  * @author Rodrigo
  */
-public class TablaSimbolo {
+public class TuplaSimbolo {
     private String simbolo;
     private String rol;
     private String tipo;
     private int posicion;
     private String valor;
     
-    public TablaSimbolo(){};
+    public TuplaSimbolo(){};
     
-    public TablaSimbolo(String simbolo, String rol, String tipo, int posicion, String valor){
+    public TuplaSimbolo(String simbolo, String rol, String tipo, int posicion, String valor){
         this.simbolo = simbolo;
         this.rol = rol;
         this.tipo = tipo;

@@ -9,10 +9,10 @@ import java.util.HashMap;
  */
 public class AnalisisSemantico {
     
-    private HashMap<String,TablaSimbolo> tablaSimbolos;
+    private HashMap<String,TuplaSimbolo> tablaSimbolo;
     private ArrayList<String> listaErroresSemanticos;
-    private ArrayList<String> operadoresaritmeticos; //Llenarlos
-    private ArrayList<String> operadoreslogicos;//Llenarlos
+    private ArrayList<String> operadoresAritmeticos; //Llenarlos
+    private ArrayList<String> operadoresLogicos;//Llenarlos
     
     public void ejecutarAnalisisSemantico(/*Recibir archivo o texto*/){
         int numerorRenglon;
@@ -60,7 +60,7 @@ public class AnalisisSemantico {
         
     }
     
-    public void validarTipoOperadores(ArrayList<TablaSimbolo> atributo, ArrayList<String> operadoresRenglon){
+    public void validarTipoOperadores(ArrayList<TuplaSimbolo> atributo, ArrayList<String> operadoresRenglon){
         /*
             -Obtener valor de un atributo, para conocer el tipo de dato que estamos usando.
             -Dependiendo del tipo de dato, se va tomar la lista de operadores logicos o aritmeticos.
@@ -69,7 +69,7 @@ public class AnalisisSemantico {
         */
     }
     
-    public void validarTipodeDatosCostantes(ArrayList<TablaSimbolo> atributo,ArrayList<String> listaConstantes){
+    public void validarTipodeDatosCostantes(ArrayList<TuplaSimbolo> atributo,ArrayList<String> listaConstantes){
         /*
             -Realizar iteración de contastes.
             -Validar que exista el tipo de dato de la constante dentro de los atributos de los simbolos.
@@ -78,7 +78,7 @@ public class AnalisisSemantico {
         */
     }
     
-    public boolean validarTipodeDatosOperandos(ArrayList<TablaSimbolo> atributos){
+    public boolean validarTipodeDatosOperandos(ArrayList<TuplaSimbolo> atributos){
         boolean regresa = true;
         /*
             -Realizar iteración de lal arraylist de los atributos
@@ -93,7 +93,7 @@ public class AnalisisSemantico {
     public void insertarDeclaración(String renglon, int numeroRenglon){
         //Separar los elementos de la declaración, ejemplo int a, tiene dos items;
         //If(!encontrarSimbolo(simbolo))
-            //tablaSimbolos.put(simbolo, new TablaSimbolo(simbolo, "Operando", "Int", numeroRenglon,"0"));
+            //tablaSimbolos.put(simbolo, new TuplaSimbolo(simbolo, "Operando", "Int", numeroRenglon,"0"));
         //else
             //Obtener los valores del simbolo simboloAtributos =  tablaSimbolos.get(simbolo);
             //Insertar en listaErroresSemanticos que ya existe el simbolo, con los datos pedidos por el profesor;
@@ -109,10 +109,10 @@ public class AnalisisSemantico {
     }
    
     
-    public boolean encontrarSimbolo(String simbolo){
+    public boolean contieneSimbolo(String simbolo){
         boolean bRegresa = false;
         
-         if (tablaSimbolos.containsKey(simbolo))
+         if (tablaSimbolo.containsKey(simbolo))
         {
             bRegresa = true;
         }
@@ -120,8 +120,8 @@ public class AnalisisSemantico {
         return bRegresa;
     }
     
-    public TablaSimbolo obtenerDatosSimbolo(String simbolo){
-         TablaSimbolo atributosSimbolos = new TablaSimbolo();
+    public TuplaSimbolo obtenerDatosSimbolo(String simbolo){
+         TuplaSimbolo atributosSimbolos = new TuplaSimbolo();
          
          return atributosSimbolos;
     }

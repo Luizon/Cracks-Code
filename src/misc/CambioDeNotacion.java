@@ -1,3 +1,4 @@
+// nada tiene que ver con el compilador ni con el Crack's Code, sólo fue creado a modo de práctica y no sabía donde meterlo xd
 package misc;
 
 import java.util.Scanner;

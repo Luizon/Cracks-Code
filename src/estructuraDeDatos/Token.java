@@ -21,6 +21,12 @@ public class Token
 		this.linea=linea;
 		this.columna=columna;
 	}
+	public Token(String valor, int tipo, int linea) {
+		this.tipo=tipo;
+		this.valor=valor;
+		this.linea=linea;
+		this.columna=-666;
+	}
 	public int getTipo() {
 		return tipo;
 	}

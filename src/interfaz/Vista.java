@@ -68,13 +68,13 @@ public class Vista extends JFrame implements Serializable {
 	public ListaDoble<Boolean> cambiosGuardados;
 	public ListaDoble<PanelPestaña> titulo;
 	private ArrayList<String[]> listaArchivosRecientes;
-	public JList<String> tokens;
+	public JList<String> consola;
 	public Escuchadores escuchadores;
 	public int tabulaciones = 0,
 			tema = Theme.CLARO,
 			posicionRelativaDelDividorDeLosTabbedPane = 0;
 	public boolean hayError = false;
-	public final String [] tituloTabla = new String[]{"Posición", "Simbolo", "Valor", "Rol", "Tipo"};
+	public final String [] tituloTabla = new String[]{"Posición", "Alcance", "Tipo", "Simbolo", "Valor"};
 	public DefaultTableModel modelo = new DefaultTableModel(new Object[0][0], tituloTabla);
 	public JTable tablaDatos = new JTable(modelo);
 	private final String carpetaDeAppData = System.getenv("APPDATA") + "/Cracks Code/",
@@ -413,9 +413,9 @@ public class Vista extends JFrame implements Serializable {
 	
 	private void crearPestañasDeAbajo() {
 		bottomTabs = new JTabbedPane();
-		tokens=new JList<String>();
-		tokens.setFont(new Font("Consolas", Font.PLAIN, 16));
-		JScrollPane pestañaConsola = new JScrollPane(tokens);
+		consola=new JList<String>();
+		consola.setFont(new Font("Consolas", Font.PLAIN, 16));
+		JScrollPane pestañaConsola = new JScrollPane(consola);
 		JScrollPane pestañaDatos = new JScrollPane(tablaDatos);
 		pestañaConsola.setFocusable(false);
 		pestañaDatos.setFocusable(false);
@@ -453,7 +453,7 @@ public class Vista extends JFrame implements Serializable {
 
 			// Paneles de las pestañas
 				tablaDatos.setFocusable(false);
-				tokens.setFocusable(false); // la wea de la pestaña Consola
+				consola.setFocusable(false); // la wea de la pestaña Consola
 				
 			// Los menus
 				menuArchivo.setFocusable(false);
@@ -492,7 +492,7 @@ public class Vista extends JFrame implements Serializable {
 					acercaDe.addActionListener(escuchadores);
 				
 			// Cambio entre pestañas
-				tokens.addAncestorListener(escuchadores);
+				consola.addAncestorListener(escuchadores);
 				tablaDatos.addAncestorListener(escuchadores);
 				codigoTabs.addMouseListener(escuchadores);
 				for(int i=0; i<txtCodigo.length(); i++)
@@ -693,7 +693,7 @@ public class Vista extends JFrame implements Serializable {
 			
 			final int tabs = getSelectedTab();
 			JTextPane codigoEnPestaña = txtCodigo.getByIndex(tabs).dato;
-			String str = codigoEnPestaña.getDocument().getText(0, codigoEnPestaña.getText().length());
+			String str = codigoEnPestaña.getText();
 			escritor.print(str); 
 			archivo.close();
 			escritor.close();
