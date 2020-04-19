@@ -20,7 +20,7 @@ public class AcercaDe extends JFrame implements FocusListener, KeyListener, Hype
 		super("Acerca de");
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
-		setSize(400, 470);
+		setSize(400, 550);
 		setLocationRelativeTo(null);
 		add(contenido());
 		addFocusListener(this);
@@ -32,46 +32,55 @@ public class AcercaDe extends JFrame implements FocusListener, KeyListener, Hype
 	private JPanel contenido() {
 		JPanel panel = new JPanel();
 		String css =
-				"body {"
-				+ "		text-align: center;"
-				+ "}"
-				+ "h1 {"
-				+ "		color: #000000;"
-				+ "		font-size: 25px;"
-				+ "}"
-				+ "p {"
-				+ "		color: #777777;"
-				+ "		font-size: 15px;"
-				+ "}"
-				+ ".exit {"
-				+ "		color: #BB8888;"
-				+ "		font-style: italic;"
-				+ "		font-size: 10px;"
-				+ "}"
-				+ "div {"
-				+ "		padding-top: 20px;"
-				+ "}";
+			"body {"
+			+ "		text-align: center;"
+			+ "}"
+			+ "h1 {"
+			+ "		color: #000000;"
+			+ "		font-size: 25px;"
+			+ "}"
+			+ "p {"
+			+ "		color: #777777;"
+			+ "		font-size: 15px;"
+			+ "}"
+			+ ".exit {"
+			+ "		color: #BB8888;"
+			+ "		font-style: italic;"
+			+ "		font-size: 10px;"
+			+ "}"
+			+ "div {"
+			+ "		padding-top: 20px;"
+			+ "}"
+			+ "a {"
+			+ "		font-weight: bold;"
+			+ "		color: #008800;"
+			+ "		font-size: 15px;"
+			+ "}";
 		
 		String body =
-				"<div width="+(getWidth()-50)+">"
-					+ "<img src=\"file:\\"+Statics.getImage("aboutb")+"\">"
-					+ "<h1><u>"
-						+ "Acerca de"
-					+ "</u></h1>"
-					+ "<p>"
-						+ "Hecho por Luis Cárdenas, le pidieron un compilador y se puso a hacer "
-						+ "un editor de texto plano el joven. No me arrepiento, me he entretenido "
-						+ "y he aprendido cosas 8]"
-					+ "</p>"
-					+ "<br />"
-					+ "<a href=\"https://github.com/Luizon/\">ver Github del joven</a>"
-					+ "<br />"
-					+ "<br />"
-					+ "<br />"
-					+"<p class=\"exit\">"
-					+ "		Presione cualquier tecla para cerrar esta ventana"
-					+ "</p>"
-				+"</div>";
+			"<div width="+(getWidth()-50)+">"
+				+ "<img src=\"file:\\"+Statics.getImage("aboutb")+"\">"
+				+ "<h1><u>"
+					+ "Acerca de"
+				+ "</u></h1>"
+				+ "<p>"
+					+ "Hecho por Luis Cárdenas, le pidieron un compilador y se puso a hacer "
+					+ "un editor de texto plano el joven. No me arrepiento, me he entretenido "
+					+ "y he aprendido cosas 8]"
+				+ "</p>"
+				+ "<p style=\"font-size: 12px;\">"
+					+ "Nota: el programa ha sido hecho para <u>Windows</u>, en otras "
+					+ "plataformas podría no funcionar del todo bien."
+				+ "</p>"
+				+ "<br />"
+				+ "<a href=\"https://github.com/Luizon/\">ver Github del joven</a>"
+				+ "<br />"
+				+ "<br />"
+				+ "<br />"
+				+"<p class=\"exit\">"
+				+ "		Presione cualquier tecla para cerrar esta ventana"
+				+ "</p>"
+			+"</div>";
 		JEditorPane editorPane = new JEditorPane("text/html", Statics.getHTML(body, css));
 		editorPane.setEditable(false);
 		editorPane.setFocusable(false);

@@ -4,10 +4,10 @@ import misc.Statics;
 
 public class Token 
 {
-	private int tipo;
 	private String valor;
 	private int linea,
-		id;
+		id,
+		tipo;
 	public Token(int linea, int tipo, int id, String valor) {
 		this.tipo=tipo;
 		this.valor=valor;
@@ -20,14 +20,11 @@ public class Token
 	public String getValor() {
 		return valor;
 	}
-	public int getColumna() {
+	public int getId() {
 		return id;
 	}
 	public int getLinea() {
 		return linea;
-	}
-	public void setValor(String valor) {
-		this.valor = valor;
 	}
 	public String toString() {
 		return "Token " + valor + ":"
@@ -36,5 +33,12 @@ public class Token
 			+ "\n\tlinea: "+linea+","
 			+ "\n\ttipo: " + Statics.tipoDeToken[tipo]
 			+ "\n}";
+	}
+	public String toHTML() {
+		return "Token <b>" + valor + "</b>: {<br />"
+				+ "&nbsp;&nbsp;&nbsp;&nbsp;id: "+id+",<br />"
+				+ "&nbsp;&nbsp;&nbsp;&nbsp;linea: "+linea+",<br />"
+				+ "&nbsp;&nbsp;&nbsp;&nbsp;tipo: " + Statics.tipoDeToken[tipo]+"<br />"
+				+ "}";
 	}
 }

@@ -93,12 +93,8 @@ public class ListaDoble<E> implements Serializable {
 						Tra.siguiente = null;
 					}
 		}
-		if (n!=0)
-			if (r==0)
-				System.out.println("No se encontró.");
-			else {
-				System.out.println("Elemento "+Tra.dato+" de la posición " + cont + " eliminado.");
-			}
+		if (r==0)
+			System.out.println("No se encontró.");
 		size--;
 	}
 	public String toString() {

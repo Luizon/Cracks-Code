@@ -1,6 +1,5 @@
 package interfaz;
 
-import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,29 +10,28 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.text.BadLocationException;
 
+import compilador.AnalizadorLexico;
+import compilador.AnalizadorSemantico;
+import compilador.Identificador;
+import compilador.Token;
 import misc.Statics;
-import viejoCompilador.Analizador;
-import viejoCompilador.Identificador;
 
 @SuppressWarnings("serial")
 public class Escuchadores implements Serializable, ActionListener, KeyListener, WindowListener, AncestorListener, MouseListener {
 	private Vista vista;
 	public boolean teclaControl = false,
-			teclaShift = false,
-			teclaAlt = false;
+		teclaShift = false,
+		teclaAlt = false;
 	public Escuchadores(Vista vista) {
 		this.vista = vista;
 	}
@@ -50,6 +48,12 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		vista.bottomTabs.setTitleAt(0, consola);
 		vista.bottomTabs.setIconAt(1, icono);
 		vista.bottomTabs.setTitleAt(1, datos);
+		
+		int tab = vista.getSelectedTab();
+		if(vista.hayError)
+			vista.titulo.getByIndex(tab).dato.setIcon(icono);
+		else
+			vista.titulo.getByIndex(tab).dato.setIcon(vista.icoCode);
 	}
 	private void cerrarPestaña() {
 		if(teclaControl) {
@@ -159,7 +163,6 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				System.out.println("Datos: \n"
 				+ "[\n"
 				+ "\ttitulos: " + vista.titulo.length() + "\n"
-				+ "\tcodigos temporales: " + vista.codigoTemporal.length() + "\n"
 				+ "\trutas de archivo actual: " + vista.rutaDeArchivoActual.length() + "\n"
 				+ "\tnombres de archivos: " + vista.nombreDelArchivo.length() + "\n"
 				+ "\ttitulos de ventana: " + vista.tituloVentana.length() + "\n"
@@ -207,6 +210,8 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 	public void keyTyped(KeyEvent key) { // sólo para teclas de escritura; como letras, números, símbolos, etc. No jala con teclas como control, alt, fin, etc.
 		int tabs = vista.codigoTabs.getSelectedIndex();
 		String archivoNombre = vista.nombreDelArchivo.getByIndex(tabs).dato;
+		if(teclaControl)
+			return;
 		vista.titulo.getByIndex(tabs).dato.setTitle("*" + archivoNombre);
 	}
 	@Override
@@ -235,25 +240,22 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			System.exit(0);
 		}
 		if(evt.getSource() == vista.compilarCodigo) {
-			System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+			for(int i=0; i<50; i++)
+				System.out.print("\n");
 			int tabs = vista.getSelectedTab();
-			try {
-				String texto = vista.txtCodigo.getByIndex(tabs).dato.getText();
-				Statics.guardarArchivo(vista.codigoTemporal.getByIndex(tabs).dato.getPath(), texto);
-				Analizador anal = new Analizador(vista.codigoTemporal.getByIndex(tabs).dato.getPath(), vista);
-				vista.consola.setListData(anal.getmistokens().toArray( new String [0]));
-				vista.modelo = new DefaultTableModel(new Object[0][0],vista.tituloTabla);
-				vista.tablaDatos.setModel(vista.modelo);
-				for (int i = anal.getIdenti().size()-1; i >=0; i--) {
-					Identificador id = anal.getIdenti().get(i);
-					if(!id.tipo.equals("")) {
-						Object datostabla[]= {id.tipo,id.nombre,id.valor};
-						vista.modelo.addRow(datostabla);
-					}
-				}
-			} catch (BadLocationException e) {
-				e.printStackTrace();
+			String codigoAGuardar = vista.txtCodigo.getByIndex(tabs).dato.getText();
+			Statics.guardarArchivo(vista.archivoTemporal.getAbsolutePath(), codigoAGuardar);
+			ArrayList<Token> tokens = new ArrayList<Token>();
+			ArrayList<String> listaDeImpresiones = new ArrayList<String>();
+			boolean analisisCorrecto = AnalizadorLexico.analizaCodigoDesdeArchivo(listaDeImpresiones, tokens, vista.archivoTemporal.getAbsolutePath());
+			HashMap<String, Identificador> identificadores;
+			if(analisisCorrecto && codigoAGuardar.length() > 0) {
+				identificadores = new HashMap<String, Identificador>();
+				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, identificadores, vista.tablaDatos, vista.tituloTabla);
 			}
+			vista.consola.setListData(Statics.deArrayDinamicaAEstatica(listaDeImpresiones));
+			
+			vista.hayError = !analisisCorrecto;
 			modificaTitulos();
 			return;
 		}

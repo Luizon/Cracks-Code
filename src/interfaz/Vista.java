@@ -36,6 +36,7 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.tools.ToolProvider;
 
 import estructuraDeDatos.ListaDoble;
 import misc.Statics;
@@ -44,26 +45,26 @@ import misc.Statics;
 public class Vista extends JFrame implements Serializable {
 	public JMenuBar barraDelMenu;
 	public JMenu menuArchivo,
-			menuCompilar,
-			menuOpciones,
-			menuArchivosRecientes;
+		menuCompilar,
+		menuOpciones,
+		menuArchivosRecientes;
 	public JMenuItem nuevoArchivo,
-			cargarArchivo,
-			guardarArchivo,
-			guardarComo,
-			salir,
-			compilarCodigo,
-			cambiarTema,
-			ayuda,
-			acercaDe;
+		cargarArchivo,
+		guardarArchivo,
+		guardarComo,
+		salir,
+		compilarCodigo,
+		cambiarTema,
+		ayuda,
+		acercaDe;
 	public JSplitPane dividor;
 	public JTabbedPane codigoTabs,
-			bottomTabs;
+		bottomTabs;
 	public ListaDoble<JTextPane> txtCodigo;
-	public ListaDoble<File> codigoTemporal;
+	public File archivoTemporal;
 	public ListaDoble<String> rutaDeArchivoActual,
-			nombreDelArchivo,
-			tituloVentana;
+		nombreDelArchivo,
+		tituloVentana;
 	public ListaDoble<Integer> tamañoTextoDelEditor;
 	public ListaDoble<Boolean> cambiosGuardados;
 	public ListaDoble<PanelPestaña> titulo;
@@ -71,12 +72,12 @@ public class Vista extends JFrame implements Serializable {
 	public JList<String> consola;
 	public Escuchadores escuchadores;
 	public int tabulaciones = 0,
-			tema = Theme.CLARO,
-			posicionRelativaDelDividorDeLosTabbedPane = 0;
-	public boolean hayError = false;
+		tema = Theme.CLARO,
+		posicionRelativaDelDividorDeLosTabbedPane = 0;
+	public boolean hayError = false; // hacer algo con esto después, no me gusta
 	public final String [] tituloTabla = new String[]{"Posición", "Alcance", "Tipo", "Simbolo", "Valor"};
-	public DefaultTableModel modelo = new DefaultTableModel(new Object[0][0], tituloTabla);
-	public JTable tablaDatos = new JTable(modelo);
+	public DefaultTableModel modelo;
+	public JTable tablaDatos;
 	private final String carpetaDeAppData = System.getenv("APPDATA") + "/Cracks Code/",
 		archivoDeArchivosRecientes = carpetaDeAppData+"recientes.txt",
 		archivoUltimoTemaUsado = carpetaDeAppData+"ultimoTemaUsado.txt",
@@ -90,6 +91,7 @@ public class Vista extends JFrame implements Serializable {
 		icoCerrarPestaña;
 	private int contadorDePestañas = 0;
 	private Object[] sesion;
+	public Font fontHeader = new Font("Arial", Font.BOLD, 17);
 
 	public Vista() {
 		super("CRACK'S Code");
@@ -117,9 +119,9 @@ public class Vista extends JFrame implements Serializable {
 		codigoTabs.setSelectedIndex(codigoTabs.getTabCount()-1);
 		cargarUltimoTemaUsado();
 		Theme.changeTheme(this);
+		creaFicheroTemporal();
 //		if(!reanudarSesionAnterior()) { // no funciona bien, ya luego lo repararé
 			titulo = new ListaDoble<PanelPestaña>();
-			codigoTemporal = new ListaDoble<File>();
 			rutaDeArchivoActual = new ListaDoble<String>();
 			nombreDelArchivo = new ListaDoble<String>();
 			tituloVentana = new ListaDoble<String>();
@@ -137,7 +139,6 @@ public class Vista extends JFrame implements Serializable {
 		/*System.out.println("Datos: \n"
 				+ "[\n"
 				+ "\ttitulos: " + titulo.length() + "\n"
-				+ "\tcodigos temporales: " + codigoTemporal.length() + "\n"
 				+ "\trutas de archivo actual: " + rutaDeArchivoActual.length() + "\n"
 				+ "\tnombres de archivos: " + nombreDelArchivo.length() + "\n"
 				+ "\ttitulos de ventana: " + tituloVentana.length() + "\n"
@@ -186,13 +187,12 @@ public class Vista extends JFrame implements Serializable {
 		}
 		
 		titulo = (ListaDoble<PanelPestaña>)sesion[0];
-		codigoTemporal = (ListaDoble<File>)sesion[1];
-		rutaDeArchivoActual = (ListaDoble<String>)sesion[2];
-		nombreDelArchivo = (ListaDoble<String>)sesion[3];
-		tituloVentana = (ListaDoble<String>)sesion[4];
-		tamañoTextoDelEditor = (ListaDoble<Integer>)sesion[5];
-		cambiosGuardados = (ListaDoble<Boolean>)sesion[6];
-		txtCodigo = (ListaDoble<JTextPane>)sesion[7];
+		rutaDeArchivoActual = (ListaDoble<String>)sesion[1];
+		nombreDelArchivo = (ListaDoble<String>)sesion[2];
+		tituloVentana = (ListaDoble<String>)sesion[3];
+		tamañoTextoDelEditor = (ListaDoble<Integer>)sesion[4];
+		cambiosGuardados = (ListaDoble<Boolean>)sesion[5];
+		txtCodigo = (ListaDoble<JTextPane>)sesion[6];
 		
 		int finDelFor = titulo.length();
 		for(int i=0; i<finDelFor; i++) {
@@ -210,13 +210,12 @@ public class Vista extends JFrame implements Serializable {
 	public void guardarSesion() { // unused pero de momento xd
 		sesion = new Object[]{
 				titulo, // 0
-				codigoTemporal, // 1
-				rutaDeArchivoActual, // 2
-				nombreDelArchivo, // 3
-				tituloVentana, // 4
-				tamañoTextoDelEditor, // 5
-				cambiosGuardados, //6
-				txtCodigo}; //7
+				rutaDeArchivoActual, // 1
+				nombreDelArchivo, // 2
+				tituloVentana, // 3
+				tamañoTextoDelEditor, // 4
+				cambiosGuardados, //5
+				txtCodigo}; //6
 		try {
 			File archivoParaEliminar = new File(archivoUltimaSesion);
 			archivoParaEliminar.delete();
@@ -416,6 +415,9 @@ public class Vista extends JFrame implements Serializable {
 		consola=new JList<String>();
 		consola.setFont(new Font("Consolas", Font.PLAIN, 16));
 		JScrollPane pestañaConsola = new JScrollPane(consola);
+		modelo = new DefaultTableModel(new Object[0][0], tituloTabla);
+		tablaDatos = new JTable(modelo);
+		tablaDatos.getTableHeader().setFont(fontHeader);
 		JScrollPane pestañaDatos = new JScrollPane(tablaDatos);
 		pestañaConsola.setFocusable(false);
 		pestañaDatos.setFocusable(false);
@@ -432,8 +434,8 @@ public class Vista extends JFrame implements Serializable {
 	
 	private void creaFicheroTemporal() {
 		try {
-			codigoTemporal.insertar(File.createTempFile("codigoTemporal",null));
-			codigoTemporal.getFin().dato.deleteOnExit();
+			archivoTemporal = File.createTempFile("archivoTemporal",null);
+			archivoTemporal.deleteOnExit();
 		}
 		catch (Exception e) {
 			System.out.println("Error al guardar el archivo temporal para compilar su código.");
@@ -516,7 +518,6 @@ public class Vista extends JFrame implements Serializable {
 			cajaDeTexto.setFont(new Font("Consolas", Font.PLAIN, 16));
 			cajaDeTexto.addKeyListener(escuchadores);
 			cajaDeTexto.addAncestorListener(escuchadores);
-			creaFicheroTemporal();
 			rutaDeArchivoActual.insertar(ruta);
 			nombreDelArchivo.insertar(nombre);
 			if(ruta.length() == 0)
@@ -541,7 +542,7 @@ public class Vista extends JFrame implements Serializable {
 		codigoTabs.setSelectedIndex(codigoTabs.getTabCount()-2); // selecciona la última pestaña código
 		
 		txtCodigo.getByIndex(tabs-1).dato.requestFocus();
-		System.out.println("tamaño del texto: "+tamaño);
+//		System.out.println("tamaño del texto: "+tamaño);
 	}
 	
 	public void actualizarBotonesDePestañas() {
@@ -579,14 +580,6 @@ public class Vista extends JFrame implements Serializable {
 				return;
 			}
 		}
-		try {
-			codigoTemporal.getByIndex(tabs).dato.delete();
-		} catch(Exception e) {
-			System.out.println("Error al eliminar el archivo temporal.");
-			System.out.println("Pero es temporal, se borrará cuando el programa acabe. Igual ten el recorrido completo del error:");
-			e.printStackTrace();
-		}
-		codigoTemporal.borrar(tabs);
 		titulo.borrar(tabs);
 		txtCodigo.borrar(tabs);
 		rutaDeArchivoActual.borrar(tabs);
@@ -700,7 +693,7 @@ public class Vista extends JFrame implements Serializable {
 			setTitle(nombreDelArchivo.getByIndex(tabs).dato + " - " + rutaDeArchivoActual.getByIndex(tabs).dato + " - CRACK'S Code");
 			tituloVentana.getByIndex(tabs).dato = getTitle();
 			String nombreDeArchivo = new File(ruta).getName(),
-					toolTipText = ruta;
+				toolTipText = ruta;
 			titulo.getByIndex(tabs).dato.setTitle(nombreDeArchivo, toolTipText);
 			
 			añadirArchivoARecientes(nombreDeArchivo, toolTipText);
@@ -726,7 +719,6 @@ public class Vista extends JFrame implements Serializable {
 				nombreDelArchivo.getByIndex(tabs).dato = fichero.getName();
 				guardarArchivo(fichero.getPath());
 				setTitle(nombreDelArchivo.getByIndex(tabs).dato + " - " + rutaDeArchivoActual.getByIndex(tabs).dato + " - CRACK'S Code");
-				titulo.getByIndex(tabs).dato.setTitle(fichero.getName(), fichero.getAbsolutePath());
 				añadirArchivoARecientes(fichero.getName(), fichero.getAbsolutePath());
 
 				JOptionPane.showMessageDialog(null, "El archivo ha sido guardado con éxito.", "", JOptionPane.INFORMATION_MESSAGE);
