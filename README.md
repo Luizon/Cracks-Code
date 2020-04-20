@@ -1,5 +1,15 @@
 # Editor de codigo de los cracks, also proyecto compilador para mi clase de lenguajes y autómatas
 --------------------------------
+# NOTAS
+- El compilador no acepta modificadores, no intente añadir public o private
+- El compilador no acepta expresiones aritméticas ni expresiones lógicas, no supe hacerlo y no me di el tiempo suficiente para aprender xd
+- El modo oscuro del compilador puede no funcionar perfectamente siempre, se recomienda el claro si le da un problema, personalmente prefiero el oscuro de todos modos
+
+### Los colores en la tabla de símbolo de hecho son una ayuda para saber el alcance en el que están declaradas las variables y clases.
+![Imagen del camino feliz](/img/caminoFeliz.png)
+
+
+---------------------------------------
 disculpe usted los comentarios informales profe, no esperaba que lo pidiera por GitHub cuando había hecho el repositorio hace meses jaja
 
 

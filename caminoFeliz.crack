@@ -14,7 +14,12 @@ class quePex {
 	class comoEstás {
 		string hola = "como_estas";
 	}
-	double hola = 6.9; // una vez acaba su alcance, las variables dejan de existir en el compilador y pueden declararse nuevamente, incluso con otro tipo
+	double henlo = 6.9; // una vez acaba su alcance, las variables dejan de existir en el compilador y pueden declararse nuevamente, incluso con otro tipo
+	{
+		string hola = "también-se-aceptan-llaves-sin-clase";
+		string adios = "apoco-no-esta-chido";
+	}
+	double hola = holi;
 }
 // luego de pasar los contextos anteriores aún se pueden acceder a los del actual
 int e = a;
