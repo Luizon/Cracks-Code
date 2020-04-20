@@ -164,12 +164,22 @@ public class AnalizadorSemantico {
 				if(token.getValor().equals("(") || token.getValor().equals("{")) {
 					pilaDeParentesis.push(token);
 					if(token.getValor().equals("{")) {
+						if(nombre.length() == 0) {
+							String mensajeError = "<p>Error en la linea "+token.getLinea()+": no asignó un <strong>nombre</strong> para la clase que quiere asignar.";
+							listaDeImpresiones.add(Statics.getHTML(mensajeError, Statics.consolaCss));
+							errorEnLinea = true;
+							analisisCorrecto = false;
+						}
+						else {
+							int alcanceDeClase = (alcanceLocal.isEmpty() ? 0 : alcanceLocal.peek());
+							identificadoresReales.put(nombre, new Identificador(token.getLinea(), alcanceDeClase, Statics.getTipoDeConstante("class"), nombre, "{}", contadorDeIdentificadores++) );
+							errorEnLinea = false;
+						}
+						hayIgual = false;
 						tipo = -1;
 						alcance = 0;
 						valor = nombre = "";
-						errorEnLinea = hayIgual = false;
 						alcanceLocal.push(contadorDeContextos++);
-						System.out.println(contadorDeContextos);
 					}
 				}
 				else {
@@ -177,10 +187,22 @@ public class AnalizadorSemantico {
 					|| pilaDeParentesis.peek().getValor().equals("{") && token.getValor().equals("}")) {
 						pilaDeParentesis.pop();
 						if(token.getValor().equals("{") || token.getValor().equals("}")) {
+							System.out.println("-"+ nombre.length());
+							if(tipo == Statics.getTipoDeConstante("class")) {
+								if(token.getValor().equals("}")) {
+									String mensajeError = "<p>Error en la linea "+token.getLinea()+": no está declarando correctamente la clase <strong>" + nombre + "</strong>"
+									+"<br />&nbsp;&nbsp;&nbsp;&nbsp;Haga un correcto uso de las llaves <b>{}</b> luego del nombre de la clase.";
+									listaDeImpresiones.add(Statics.getHTML(mensajeError, Statics.consolaCss));
+									errorEnLinea = true;
+									analisisCorrecto = false;
+								}
+							}
+							else
+								errorEnLinea = false;
 							tipo = -1;
 							alcance = 0;
 							valor = nombre = "";
-							errorEnLinea = hayIgual = false;
+							hayIgual = false;
 						}
 					}
 					if(token.getValor().equals("}")) {
@@ -219,7 +241,7 @@ public class AnalizadorSemantico {
 			}
 
 		if(tipo >= 4) {
-			String mensajeError = "<p>Error en la última linea: Función o clase mal definida.";
+			String mensajeError = "<p>Error en la linea "+tokens.get(tokens.size()-1).getLinea()+": Clase mal definida.";
 			listaDeImpresiones.add(Statics.getHTML(mensajeError, Statics.consolaCss));
 			analisisCorrecto = false;
 		}
