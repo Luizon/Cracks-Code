@@ -48,7 +48,6 @@ public class Statics {
 		booleano = {"true","false"},
 		parentesis = {"(", ")"},
 		llave = {"{", "}"};
-	public final static String clase = "class";
 	public final static String consolaCss =
 			"strong {" // para destacar el token, en el error
 			+ "	font-style: italic;"

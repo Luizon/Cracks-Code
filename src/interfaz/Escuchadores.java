@@ -22,6 +22,7 @@ import javax.swing.event.AncestorListener;
 
 import compilador.AnalizadorLexico;
 import compilador.AnalizadorSemantico;
+import compilador.AnalizadorSintactico;
 import compilador.Identificador;
 import compilador.Token;
 import misc.Statics;
@@ -248,10 +249,12 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			ArrayList<Token> tokens = new ArrayList<Token>();
 			ArrayList<String> listaDeImpresiones = new ArrayList<String>();
 			boolean analisisCorrecto = AnalizadorLexico.analizaCodigoDesdeArchivo(listaDeImpresiones, tokens, vista.archivoTemporal.getAbsolutePath());
-			HashMap<String, Identificador> identificadores;
 			if(analisisCorrecto && codigoAGuardar.length() > 0) {
-				identificadores = new HashMap<String, Identificador>();
-				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, identificadores, vista.tablaDatos, vista.tituloTabla);
+				analisisCorrecto = AnalizadorSintactico.parentesisCorrectos(tokens, listaDeImpresiones);
+			}
+			if(analisisCorrecto && codigoAGuardar.length() > 0) {
+				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, new HashMap<String, Identificador>(), vista.tablaDatos, vista.tituloTabla);
+//				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, new HashMap<Object [], Identificador>(), vista.tablaDatos, vista.tituloTabla);
 			}
 			vista.consola.setListData(Statics.deArrayDinamicaAEstatica(listaDeImpresiones));
 			

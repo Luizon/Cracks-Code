@@ -6,8 +6,7 @@ disculpe usted los comentarios informales profe, no esperaba que lo pidiera por 
 -----------------------------------
 ## Lista de weas por hacer
 ### IMPORTANTES
-- rehacer el compilador completo, pls
-- hacer más compleja la forma en que se detectan strings, en el compilador sintáctico.
+- hacer más compleja la forma en que se detectan strings, en el compilador semántico.
 - añadir un contador de lineas o como se llame a la izquierda del texto
 ### Secundaros
 - añadir notas del compilador

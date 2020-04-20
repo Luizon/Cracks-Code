@@ -5,6 +5,7 @@ import misc.Statics;
 public class Identificador {
 	private String nombre,
 		valor;
+	private boolean alcanceTerminado;
 	private int posicion, // linea del código
 		alcance,
 		tipo,
@@ -17,6 +18,7 @@ public class Identificador {
 		this.nombre = nombre;
 		this.valor = valor;
 		this.id = id;
+		this.alcanceTerminado = false;
 	}
 
 	public int getPosicion() {
@@ -55,20 +57,26 @@ public class Identificador {
 	public void setId(int id) {
 		this.id = id;
 	}
+	public boolean esDeAlcanceTerminado() {
+		return alcanceTerminado;
+	}
+	public void alternarVidaDeAlcance() {
+		this.alcanceTerminado = !this.alcanceTerminado;
+	}
 	public String toString() {
-		return "Identificador "+nombre+" {"
+		return "Identificador "+nombre+": {"
 			+ "\n\tid: " + id + ","
 			+ "\n\tvalor: " + valor + ","
 			+ "\n\ttipo: " + Statics.tipoDeDato[tipo]
-			+ "\n\talcance: " + (tipo==0?"global":"local")
+			+ "\n\talcance: " + (alcance==0?"global":"local") + ", idAlcance: " + alcance
 			+ "\n\tlinea: " + posicion
-			+ "}";
+			+ "\n}";
 	}
 	public String toHTML() {
-		return "Identificador "+nombre+" {<br />"
+		return "Identificador "+nombre+": {<br />"
 			+ "&nbsp;&nbsp;&nbsp;&nbsp;valor: " + valor + ",<br />"
 			+ "&nbsp;&nbsp;&nbsp;&nbsp;tipo: " + Statics.tipoDeDato[tipo] + "<br />"
-			+ "&nbsp;&nbsp;&nbsp;&nbsp;alcance: " + (tipo==0?"global":"local") + "<br />"
+			+ "&nbsp;&nbsp;&nbsp;&nbsp;alcance: " + (alcance==0?"global":"local") + ", idAlcance: " + alcance + "<br />"
 			+ "&nbsp;&nbsp;&nbsp;&nbsp;linea: " + posicion + "<br />"
 			+ "}";
 	}

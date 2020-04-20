@@ -63,6 +63,8 @@ public class AnalizadorLexico {
 		int tipo=-1;
 		if(Statics.deArrayEstaticaADinamica(Statics.palabraReservada).contains(strToken)) 
 			tipo = Statics.palabraReservadaInt; // Es una palabra reservada
+		else if(strToken.equals("class"))
+			tipo = Statics.claseInt; // Es una clase
 		else if(Statics.deArrayEstaticaADinamica(Statics.tipoDeDato).contains(strToken)) 
 			tipo = Statics.tipoDeDatoInt; // Es un tipo de datos
 		else if(Statics.deArrayEstaticaADinamica(Statics.signo).contains(strToken)) 
@@ -73,8 +75,6 @@ public class AnalizadorLexico {
 			tipo = Statics.operadorAritmeticoInt; // Es un operador aritmetico
 		else if(Statics.deArrayEstaticaADinamica(Statics.booleano).contains(strToken)) 
 			tipo = Statics.booleanoInt; // Es una constante booleana
-		else if(strToken.equals(Statics.clase)) 
-			tipo = Statics.claseInt; // Es una clases
 		else if(Statics.esEntero(strToken)) 
 			tipo = Statics.enteroInt; // Es un número entero
 		else if(Statics.esDoble(strToken)) 
@@ -93,7 +93,7 @@ public class AnalizadorLexico {
 			for(int i=0; i < strToken.length(); i++) {
 				caracter = strToken.charAt(i) + "";
 				//			 a				  -			z					,			A				-		   Z				 ,   á é í ó ú Á É Í Ó Ú ñ Ñ                        "
-				if(!(caracter.hashCode() >= 97 && caracter.hashCode()<=122) && !(caracter.hashCode() >= 65 && caracter.hashCode()<=90) && !esCaracterDelEspañol(caracter) && caracter.hashCode()!=34 && !Statics.esEntero(caracter)) {
+				if(!(caracter.hashCode() >= 97 && caracter.hashCode()<=122) && !(caracter.hashCode() >= 65 && caracter.hashCode()<=90) && !esCaracterDelEspañol(caracter) && caracter.hashCode()!=34 && !Statics.esEntero(caracter) && !caracter.equals("_") && !caracter.equals("-")) {
 					bandera = false;
 					break;
 				}
@@ -119,7 +119,7 @@ public class AnalizadorLexico {
 		Token newToken = new Token(linea, tipo, id, strToken);
 		listaDeTokens.add(newToken);
 //		listaDeImpresiones.add(Statics.getHTML(newToken.toHTML(), Statics.consolaCss));
-		System.out.println(newToken);
+//		System.out.println(newToken);
 		return true;
 	}
 	
