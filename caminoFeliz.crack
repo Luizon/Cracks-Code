@@ -19,7 +19,7 @@ class quePex {
 		string hola = "también-se-aceptan-llaves-sin-clase";
 		string adios = "apoco-no-esta-chido";
 	}
-	double hola = holi;
+	double hola = henlo;
 }
 // luego de pasar los contextos anteriores aún se pueden acceder a los del actual
 int e = a;
