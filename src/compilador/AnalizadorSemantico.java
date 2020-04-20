@@ -24,7 +24,7 @@ public class AnalizadorSemantico {
 	static ArrayList<Token> tokens;
 	static Stack<Integer> alcanceLocal; // para guardar el alcance de las variables
 	static int contadorDeIdentificadores, alcance, contadorDeContextos, tipo;
-	static boolean hayIgual = false;
+	static boolean hayIgual = false, analisisCorrecto;
 	static String valor = "", nombre = "";
 	
 	public static boolean analizarTokens(ArrayList<String> listaDeImpresiones, ArrayList<Token> tokens, HashMap<String, Identificador> identificadoresReales, JTable tabla, String [] cabecera) {
@@ -39,8 +39,8 @@ public class AnalizadorSemantico {
 		alcance = 0;
 		valor = nombre = "";
 		contadorDeIdentificadores = contadorDeContextos = 1; // inicia en 2 porque este se asigna al alcance, y alcance 0 es global
-		boolean errorEnLinea = false,
-			analisisCorrecto = true;
+		boolean errorEnLinea = false;
+		analisisCorrecto = true;
 		hayIgual = false;
 		int ultimaLineaDeError = -1;
 		pilaDeParentesis = new Stack<Token>();
@@ -164,6 +164,10 @@ public class AnalizadorSemantico {
 				if(token.getValor().equals("(") || token.getValor().equals("{")) {
 					pilaDeParentesis.push(token);
 					if(token.getValor().equals("{")) {
+						tipo = -1;
+						alcance = 0;
+						valor = nombre = "";
+						errorEnLinea = hayIgual = false;
 						alcanceLocal.push(contadorDeContextos++);
 						System.out.println(contadorDeContextos);
 					}
@@ -207,15 +211,21 @@ public class AnalizadorSemantico {
 			}
 		}
 		
-		if(!(tipo < 0 && valor.length() == 0 && nombre.length() == 0)) { // si hay una última declaración a la cual no se le puso ; pero de hecho estaba correcta, se hace
+		if(tipo < 4 && !(tipo < 0 && valor.length() == 0 && nombre.length() == 0)) { // si hay una última declaración a la cual no se le puso ; pero de hecho estaba correcta, se hace
 			Token ultimoToken = tokens.get(tokens.size()-1);
 			tokens.add(new Token(ultimoToken.getLinea(), Statics.signoInt, tokens.size(), ";"));
 			if(creaNuevoSimbolo(tokens.size()-1, errorEnLinea))
 				contadorDeIdentificadores++;
 			}
+
+		if(tipo >= 4) {
+			String mensajeError = "<p>Error en la última linea: Función o clase mal definida.";
+			listaDeImpresiones.add(Statics.getHTML(mensajeError, Statics.consolaCss));
+			analisisCorrecto = false;
+		}
 		
 		for(Identificador identificador: identificadoresReales.values()) {
-			if(!listaDeIdentificadoresCompleta.contains(identificador.getNombre())) {
+			if(!listaDeIdentificadoresCompleta.contains(identificador)) {
 				listaDeIdentificadoresCompleta.add(identificador);
 			}
 		}
@@ -340,6 +350,7 @@ public class AnalizadorSemantico {
 			+ "<br />&nbsp;&nbsp;&nbsp;&nbsp;No se definió un <strong>"+error+"</strong> para el identificador" + identificador + ".";
 		String htmlImpreso = Statics.getHTML(mensaje, Statics.consolaCss);
 		listaDeImpresiones.add(htmlImpreso);
+		analisisCorrecto = false;
 	}
 	
 	private static void mensajeSeEsperaba(int i) {

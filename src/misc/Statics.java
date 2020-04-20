@@ -41,7 +41,7 @@ public class Statics {
 	public final static String[]
 		alcance = {"global", "local"},
 		palabraReservada = {"if","while"},
-		tipoDeDato = {"int", "string", "boolean", "double", "class", "function", "method"}, // de dato y de otra cosas, por comodidad mía xd
+		tipoDeDato = {"int", "string", "boolean", "double", "class", "function"}, // de dato y de otra cosas, por comodidad mía xd
 		signo = {"=",";"},
 		operadorLogico = {"<","<=",">",">=","==","!="},
 		operadorAritmetico = {"+","-","*","/"},
@@ -107,6 +107,10 @@ public class Statics {
 			return 2; // booleano
 		if(Statics.esDoble(str))
 			return 3; // entero
+		if(str.equals("class"))
+			return 4; // clase
+		if(str.equals("function"))
+			return 5; // funcion
 		return -1;
 	}
 	

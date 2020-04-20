@@ -1,0 +1,29 @@
+// declaración vacia
+string vacio;
+vacio = "ya-no-estoy-vacio";
+
+// declaración normal
+int a = 1;
+int b = a;
+
+// cambios de variable (note que en consola a es igual a 50)
+a = 50;
+
+// distintos contextos
+{
+	// estas variables no existen fuera de estos bloques de código
+	int c = b;
+	int d = 5;
+	{
+		string hola = "como_estas";
+	}
+	double hola = 6.9; // una vez acaba su alcance, las variables dejan de existir en el compilador y pueden declararse nuevamente, incluso con otro tipo
+}
+
+// luego de pasar los contextos anteriores aún se pueden acceder a los del actual
+int e = a;
+//int f = d; // descomentado, marca error, debido a que d ya no existe
+
+// todo bien
+string quéPex = "todo-nice";
+boolean todoMaravillos = true;
