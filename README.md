@@ -2,6 +2,7 @@
 --------------------------------
 # NOTAS
 - El compilador no acepta modificadores, no intente añadir public o private
+- El compilador acepta comentarios normales, ponga <b>//</b> y todo lo que le siga a eso en una linea será ignorado por el compilador
 - El compilador no acepta expresiones aritméticas ni expresiones lógicas, no supe hacerlo y no me di el tiempo suficiente para aprender xd
 - El modo oscuro del compilador puede no funcionar perfectamente siempre, se recomienda el claro si le da un problema, personalmente prefiero el oscuro de todos modos
 
