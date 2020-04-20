@@ -254,7 +254,6 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			}
 			if(analisisCorrecto && codigoAGuardar.length() > 0) {
 				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, new HashMap<String, Identificador>(), vista.tablaDatos, vista.tituloTabla);
-//				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, new HashMap<Object [], Identificador>(), vista.tablaDatos, vista.tituloTabla);
 			}
 			vista.consola.setListData(Statics.deArrayDinamicaAEstatica(listaDeImpresiones));
 			

@@ -43,7 +43,7 @@ public class Statics {
 		palabraReservada = {"if","while"},
 		tipoDeDato = {"int", "string", "boolean", "double", "class"}, // de dato y de otra cosas, por comodidad mía xd
 		signo = {"=",";"},
-		operadorLogico = {"<","<=",">",">=","==","!="},
+		operadorLogico = {"<","<=",">",">=","==","!=","&&","||"},
 		operadorAritmetico = {"+","-","*","/"},
 		booleano = {"true","false"},
 		parentesis = {"(", ")"},
@@ -98,6 +98,13 @@ public class Statics {
 		return true;
 	}
 	
+	public static boolean esConstante(String token) {
+		if(Statics.esEntero(token) || token.endsWith("\"") && token.startsWith("\"")
+		|| "true".equals(token) || "false".equals(token) || Statics.esDoble(token))
+			return true; // entero
+		return false;
+	}
+	
 	public static int getTipoDeConstante(String str) {
 		if(Statics.esEntero(str))
 			return 0; // entero
@@ -106,7 +113,7 @@ public class Statics {
 		if("true".equals(str) || "false".equals(str))
 			return 2; // booleano
 		if(Statics.esDoble(str))
-			return 3; // entero
+			return 3; // double
 		if(str.equals("class"))
 			return 4; // clase
 		if(str.equals("function"))

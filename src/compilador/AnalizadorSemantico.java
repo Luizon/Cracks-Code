@@ -164,17 +164,18 @@ public class AnalizadorSemantico {
 				if(token.getValor().equals("(") || token.getValor().equals("{")) {
 					pilaDeParentesis.push(token);
 					if(token.getValor().equals("{")) {
-						if(nombre.length() == 0) {
-							String mensajeError = "<p>Error en la linea "+token.getLinea()+": no asignó un <strong>nombre</strong> para la clase que quiere asignar.";
-							listaDeImpresiones.add(Statics.getHTML(mensajeError, Statics.consolaCss));
-							errorEnLinea = true;
-							analisisCorrecto = false;
-						}
-						else {
-							int alcanceDeClase = (alcanceLocal.isEmpty() ? 0 : alcanceLocal.peek());
-							identificadoresReales.put(nombre, new Identificador(token.getLinea(), alcanceDeClase, Statics.getTipoDeConstante("class"), nombre, "{}", contadorDeIdentificadores++) );
-							errorEnLinea = false;
-						}
+						if(tipo == Statics.getTipoDeConstante("class"))
+							if(nombre.length() == 0) {
+								String mensajeError = "<p>Error en la linea "+token.getLinea()+": no asignó un <strong>nombre</strong> para la clase que quiere asignar.";
+								listaDeImpresiones.add(Statics.getHTML(mensajeError, Statics.consolaCss));
+								errorEnLinea = true;
+								analisisCorrecto = false;
+							}
+							else {
+								int alcanceDeClase = (alcanceLocal.isEmpty() ? 0 : alcanceLocal.peek());
+								identificadoresReales.put(nombre, new Identificador(token.getLinea(), alcanceDeClase, Statics.getTipoDeConstante("class"), nombre, "{}", contadorDeIdentificadores++) );
+								errorEnLinea = false;
+							}
 						hayIgual = false;
 						tipo = -1;
 						alcance = 0;

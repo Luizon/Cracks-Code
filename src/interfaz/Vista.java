@@ -104,8 +104,8 @@ public class Vista extends JFrame implements Serializable {
 	}
 	
 	private void hazInterfaz() {
-		//setSize(1200, 950);
-		setSize(400, 400);
+		setSize(1200, 950);
+//		setSize(400, 400);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setMinimumSize(new Dimension(700, 600));
