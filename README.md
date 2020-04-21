@@ -13,6 +13,10 @@
 ![Imagen del camino feliz](/img/caminoFeliz.png)
 
 
+### Recomiendo dar click a F1 para ver los acortadores antes de manejar el programa, para facilitar su navegación.
+![Imagen los acortadores](/img/ayuda.png)
+
+
 ---------------------------------------
 disculpe usted los comentarios informales profe, no esperaba que lo pidiera por GitHub cuando había hecho el repositorio hace meses jaja
 
