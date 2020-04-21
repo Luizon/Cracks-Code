@@ -12,9 +12,8 @@
 ### Los colores en la tabla de símbolo de hecho son una ayuda para saber el alcance en el que están declaradas las variables y clases.
 ![Imagen del camino feliz](/img/caminoFeliz.png)
 
-
 ### Recomiendo dar click a F1 para ver los acortadores antes de manejar el programa, para facilitar su navegación.
-![Imagen los acortadores](/img/ayuda.png)
+![Imagen los acortadores](/img/ventanaAyuda.png)
 
 
 ---------------------------------------
