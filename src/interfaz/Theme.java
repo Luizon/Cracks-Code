@@ -2,6 +2,7 @@ package interfaz;
 
 import java.awt.Color;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -14,28 +15,50 @@ public class Theme {
 	static private final Color AZUL_CLARO = new Color(184, 207, 229);
 	public static void changeTheme(Vista v) {
 		for (int i=0; i<v.codigoTabs.getTabCount()-1; i++) {
-			changeTheme(v.txtCodigo.getByIndex(i).dato, v.tema);
+			changeTheme((CodePane)v.codigoTabs.getComponentAt(i), v.tema);
+//			changeTheme(v.txtCodigo.getByIndex(i).dato, v.tema);
 		}
 	}
-	public static void changeTheme(JTextPane panel, int tema) {
-		final Color colorBack  =  (tema == CLARO)?Color.WHITE:Color.BLACK,
-				  colorCaret   =  (tema == CLARO)?Color.BLACK:Color.WHITE,
-				  colorSelection= (tema == CLARO)?AZUL_CLARO :Color.GRAY,
-				  colorForeground=(tema == CLARO)?Color.BLACK:ALMOST_WHITE;
-		panel.setBackground(colorBack);
-		panel.setCaretColor(colorCaret);
-		panel.setSelectionColor(colorSelection);
-		panel.setSelectedTextColor(Color.BLACK);
+	
+	public static void changeTheme(CodePane panel, int tema) {
+		final Color colorBack,
+			colorCaret,
+			colorSelection,
+			colorForeground,
+			colorLineNumberBack;
+		switch(tema) {
+			case CLARO:
+				colorBack = Color.WHITE;
+				colorCaret = Color.BLACK;
+				colorSelection = AZUL_CLARO;
+				colorForeground = Color.BLACK;
+				colorLineNumberBack = new Color(230, 230, 230);
+				break;
+			default:
+				colorBack = Color.BLACK;
+				colorCaret = Color.WHITE;
+				colorSelection = Color.GRAY;
+				colorForeground = ALMOST_WHITE;
+				colorLineNumberBack = new Color(120, 120, 120);
+				break;
+		}
+		JTextPane codePane = panel.codePane,
+			lineNumber = panel.lineNumber;
+		codePane.setBackground(colorBack);
+		codePane.setCaretColor(colorCaret);
+		codePane.setSelectionColor(colorSelection);
+		codePane.setSelectedTextColor(Color.BLACK);
+		lineNumber.setBackground(colorLineNumberBack);
 
-		StyledDocument doc = panel.getStyledDocument();
-        Style style = panel.addStyle("stylename", null);
+		StyledDocument doc = codePane.getStyledDocument();
+        Style style = codePane.addStyle("stylename", null);
         StyleConstants.setForeground(style, colorForeground);
-        String aux = panel.getText();
-        panel.setText("");
+        String aux = codePane.getText();
+        codePane.setText("");
         try {
-        	doc.insertString(0, aux.length()>0?aux:" ", style);
+        	doc.insertString(0, aux.length() > 0 ? aux : " ", style);
         	if(aux.length()==0)
-        		panel.setText("");
+        		codePane.setText("");
         }
         catch (BadLocationException e) {
         	System.out.println("falló el cambio de tema");

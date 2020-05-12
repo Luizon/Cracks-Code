@@ -91,7 +91,8 @@ public class Vista extends JFrame implements Serializable {
 		icoCerrarPestaña;
 	private int contadorDePestañas = 0;
 	private Object[] sesion;
-	public Font fontHeader = new Font("Arial", Font.BOLD, 17);
+	public Font fontHeader = new Font("Arial", Font.BOLD, 17),
+			fuenteConsola = new Font("Consolas", Font.PLAIN, 16);
 
 	public Vista() {
 		super("CRACK'S Code");
@@ -413,7 +414,7 @@ public class Vista extends JFrame implements Serializable {
 	private void crearPestañasDeAbajo() {
 		bottomTabs = new JTabbedPane();
 		consola=new JList<String>();
-		consola.setFont(new Font("Consolas", Font.PLAIN, 16));
+		consola.setFont(fuenteConsola);
 		JScrollPane pestañaConsola = new JScrollPane(consola);
 		modelo = new DefaultTableModel(new Object[0][0], tituloTabla);
 		tablaDatos = new JTable(modelo);
@@ -513,9 +514,8 @@ public class Vista extends JFrame implements Serializable {
 			}
 			JTextPane cajaDeTexto = new JTextPane();
 			cajaDeTexto.setText(texto);
-			Theme.changeTheme(cajaDeTexto, tema);
 			txtCodigo.insertar(cajaDeTexto);
-			cajaDeTexto.setFont(new Font("Consolas", Font.PLAIN, 16));
+			cajaDeTexto.setFont(fuenteConsola);
 			cajaDeTexto.addKeyListener(escuchadores);
 			cajaDeTexto.addAncestorListener(escuchadores);
 			rutaDeArchivoActual.insertar(ruta);
@@ -527,7 +527,11 @@ public class Vista extends JFrame implements Serializable {
 			tamañoTextoDelEditor.insertar(tamaño);
 			cambiosGuardados.insertar(true);
 		} // de ser tamaño un negativo es porque se quiere la pura pestaña y los datos anteriores ya se tienen
-		codigoTabs.insertTab("esto no debería salir nunca", null, new JScrollPane(txtCodigo.getByIndex(tabs-1).dato), "Archivo sin guardar", tabs);
+		
+		CodePane codePane = new CodePane(txtCodigo.getByIndex(tabs-1).dato);
+		Theme.changeTheme(codePane, tema);
+		
+		codigoTabs.insertTab("esto no debería salir nunca", null, codePane, "Archivo sin guardar", tabs);
 		if(tamaño >=0) {
 			String toolTipText = ruta;
 			if(ruta.length() == 0)
