@@ -86,6 +86,14 @@ public class AnalizadorLexico {
 		else if("//".equals(strToken))
 			return true;
 		
+		// esto de acá para quitar los 0 innecesarios
+		if(tipo == Statics.enteroInt) {
+			strToken = Integer.parseInt(strToken) + "";
+		}
+		else if(tipo == Statics.dobleInt) {
+			strToken = Double.parseDouble(strToken) + "";
+		}
+		
 		if(tipo==-1) { // No es ninguna de arriba
 			// Si entra aquí quiere decir que no es ninguna de las anteriores y paso analizarla letra por letra
 			String caracter = "";

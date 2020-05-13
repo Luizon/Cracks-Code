@@ -2,7 +2,6 @@ package interfaz;
 
 import java.awt.Color;
 
-import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -16,7 +15,6 @@ public class Theme {
 	public static void changeTheme(Vista v) {
 		for (int i=0; i<v.codigoTabs.getTabCount()-1; i++) {
 			changeTheme((CodePane)v.codigoTabs.getComponentAt(i), v.tema);
-//			changeTheme(v.txtCodigo.getByIndex(i).dato, v.tema);
 		}
 	}
 	
