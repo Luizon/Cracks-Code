@@ -59,7 +59,7 @@ public class Theme {
         		codePane.setText("");
         }
         catch (BadLocationException e) {
-        	System.out.println("falló el cambio de tema");
+        	System.out.println("fallÃ³ el cambio de tema");
         }
         
 //        StyleContext sc = StyleContext.getDefaultStyleContext();

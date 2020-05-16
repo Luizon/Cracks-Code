@@ -15,7 +15,7 @@ import misc.Statics;
 public class AnalizadorLexico {
 	public static boolean analizaCodigoDesdeArchivo(ArrayList<String> listaDeImpresiones, ArrayList<Token> listaDeTokens, String ruta) {//Recibe la ruta del archivo
 		String lineaDeTexto="", token="";
-		int linea = 1, id = 1;
+		int linea = 1, id = 0;
 		StringTokenizer tokenizer;
 		boolean analisisCorrecto = true;
 		boolean vacio = true;
@@ -31,7 +31,7 @@ public class AnalizadorLexico {
 					token = tokenizer.nextToken();
 					boolean bandera = analizarToken(token, linea, id++, listaDeImpresiones, listaDeTokens);//Y lo mando a analizar
 					if(analisisCorrecto)
-						analisisCorrecto = bandera; // si analisisCorrecto ya saliÛ false una sola vez, ya no puede cambiarse
+						analisisCorrecto = bandera; // si analisisCorrecto ya sali√≥ false una sola vez, ya no puede cambiarse
 					if(token.equals("//"))
 						break;
 				}
@@ -40,22 +40,24 @@ public class AnalizadorLexico {
 			}
 			archivoEntrada.close();
 			if(vacio) {
-				String texto = Statics.getHTML("<var><b>CÛdigo vacÌo", Statics.consolaCss);
+				String texto = Statics.getHTML("<var><b>C√≥digo vac√≠o", Statics.consolaCss);
 				listaDeImpresiones.add(texto);
-				System.out.println("Codigo vacÌo.");
+				System.out.println("Codigo vac√≠o.");
 			}
 		} catch (FileNotFoundException e) {
 			String texto = Statics.getHTML("No se encontro el archivo favor de checar la ruta <u>"+ruta, "");
-			JOptionPane.showMessageDialog(null,texto,"Error al leer el cÛdigo",JOptionPane.ERROR_MESSAGE);
-			System.out.println("Archivo de cÛdigo no encontrado para su an·lisis lÈxico.");
+			JOptionPane.showMessageDialog(null,texto,"Error al leer el c√≥digo",JOptionPane.ERROR_MESSAGE);
+			System.out.println("Archivo de c√≥digo no encontrado para su an√°lisis l√©xico.");
 			return false;
 		}
 		catch(IOException e) {
-			System.out.println("Algo fallÛ en el an·lisis lÈxico al leer el cÛdigo.");
+			System.out.println("Algo fall√≥ en el an√°lisis l√©xico al leer el c√≥digo.");
 			return false;
 		}
+		Token newToken = new Token(linea - 1, Statics.signoInt, listaDeTokens.size(), ";");
+		listaDeTokens.add(newToken);
 		if(analisisCorrecto && !vacio)
-			listaDeImpresiones.add(Statics.getHTML("<var><b>CÛdigo sin errores lÈxicos.", Statics.consolaCss));
+			listaDeImpresiones.add(Statics.getHTML("<var><b>C√≥digo sin errores l√©xicos.", Statics.consolaCss));
 		return analisisCorrecto;
 	}
 	
@@ -76,9 +78,9 @@ public class AnalizadorLexico {
 		else if(Statics.deArrayEstaticaADinamica(Statics.booleano).contains(strToken)) 
 			tipo = Statics.booleanoInt; // Es una constante booleana
 		else if(Statics.esEntero(strToken)) 
-			tipo = Statics.enteroInt; // Es un n˙mero entero
+			tipo = Statics.enteroInt; // Es un n√∫mero entero
 		else if(Statics.esDoble(strToken)) 
-			tipo = Statics.dobleInt; // Es un n˙mero doble
+			tipo = Statics.dobleInt; // Es un n√∫mero doble
 		else if(Statics.deArrayEstaticaADinamica(Statics.parentesis).contains(strToken))
 			tipo = Statics.parentesisInt; // Es un parentesis
 		else if(Statics.deArrayEstaticaADinamica(Statics.llave).contains(strToken))
@@ -86,7 +88,7 @@ public class AnalizadorLexico {
 		else if("//".equals(strToken))
 			return true;
 		
-		// esto de ac· para quitar los 0 innecesarios
+		// esto de ac√° para quitar los 0 innecesarios
 		if(tipo == Statics.enteroInt) {
 			strToken = Integer.parseInt(strToken) + "";
 		}
@@ -95,13 +97,13 @@ public class AnalizadorLexico {
 		}
 		
 		if(tipo==-1) { // No es ninguna de arriba
-			// Si entra aquÌ quiere decir que no es ninguna de las anteriores y paso analizarla letra por letra
+			// Si entra aqu√≠ quiere decir que no es ninguna de las anteriores y paso analizarla letra por letra
 			String caracter = "";
 			boolean bandera = true;
 			for(int i=0; i < strToken.length(); i++) {
 				caracter = strToken.charAt(i) + "";
-				//			 a				  -			z					,			A				-		   Z				 ,   · È Ì Û ˙ ¡ … Õ ” ⁄ Ò —                        "
-				if(!(caracter.hashCode() >= 97 && caracter.hashCode()<=122) && !(caracter.hashCode() >= 65 && caracter.hashCode()<=90) && !esCaracterDelEspaÒol(caracter) && caracter.hashCode()!=34 && !Statics.esEntero(caracter) && !caracter.equals("_") && !caracter.equals("-")) {
+				//			 a				  -			z					,			A				-		   Z				 ,   √° √© √≠ √≥ √∫ √Å √â √ç √ì √ö √± √ë                        "
+				if(!(caracter.hashCode() >= 97 && caracter.hashCode()<=122) && !(caracter.hashCode() >= 65 && caracter.hashCode()<=90) && !esCaracterDelEspa√±ol(caracter) && caracter.hashCode()!=34 && !Statics.esEntero(caracter) && !caracter.equals("_") && !caracter.equals("-")) {
 					bandera = false;
 					break;
 				}
@@ -115,15 +117,15 @@ public class AnalizadorLexico {
 					bandera = false;
 			if(!bandera) {
 				String tab = "&nbsp&nbsp&nbsp&nbsp ";
-				String texto = Statics.getHTML("<p>Error lÈxico en el token <strong>"+strToken+"</strong> de la linea <b>"+linea+"</b>."
-					+ "<br />"+tab+"Caracter <b>"+caracter+"</b> no v·lido en el compilador.",  Statics.consolaCss);
+				String texto = Statics.getHTML("<p>Error l√©xico en el token <strong>"+strToken+"</strong> de la linea <b>"+linea+"</b>."
+					+ "<br />"+tab+"Caracter <b>"+caracter+"</b> no v√°lido en el compilador.",  Statics.consolaCss);
 				listaDeImpresiones.add(texto); //Es un error y guardo el donde se produjo el error
-				System.out.println("Error lÈxico: se encontrÛ un caracter inv·lido para el compilador.");
+				System.out.println("Error l√©xico: se encontr√≥ un caracter inv√°lido para el compilador.");
 				return false;
 			}
 		}
 		
-		// todo bien, todo nice, entonces creas un token y lo aÒades a la lista de listaDeTokens
+		// todo bien, todo nice, entonces creas un token y lo a√±ades a la lista de listaDeTokens
 		Token newToken = new Token(linea, tipo, id, strToken);
 		listaDeTokens.add(newToken);
 //		listaDeImpresiones.add(Statics.getHTML(newToken.toHTML(), Statics.consolaCss));
@@ -131,8 +133,8 @@ public class AnalizadorLexico {
 		return true;
 	}
 	
-	private static boolean esCaracterDelEspaÒol(String caracter) {
-		//                           ·    È    Ì    Û    ˙    ¡    …    Õ    ”    ⁄    Ò    —
+	private static boolean esCaracterDelEspa√±ol(String caracter) {
+		//                           √°    √©    √≠    √≥    √∫    √Å    √â    √ç    √ì    √ö    √±    √ë
 		int [] caracteresValidos = {225, 233, 237, 243, 250, 193, 201, 205, 211, 218, 241, 209};
 		for(int i=0; i<caracteresValidos.length; i++)
 			if(caracter.hashCode() == caracteresValidos[i])
@@ -143,21 +145,21 @@ public class AnalizadorLexico {
 	public static String separaDelimitadores(String linea){ // mete espacios entre los >, <, !=, <=, >=, ==, = y 
 		for(int i=0; i<linea.length(); i++)
 			if(linea.charAt(i) == '=') {
-				// aÒade un espacio atr·s, si lo que tienes atr·s no es =, !, < o >
+				// a√±ade un espacio atr√°s, si lo que tienes atr√°s no es =, !, < o >
 				if(i > 0)
 					if(linea.charAt(i-1) != '=' && linea.charAt(i-1) != '!' && linea.charAt(i-1) != '<' && linea.charAt(i-1) != '>') {
-						linea = linea.substring(0, i) + " " + linea.substring(i++, linea.length()); // incrementa en uno i, para evadir el espacio aÒadido
+						linea = linea.substring(0, i) + " " + linea.substring(i++, linea.length()); // incrementa en uno i, para evadir el espacio a√±adido
 					}
-				// aÒade un espacio al frente, si lo que tienes al frente no es otro =
+				// a√±ade un espacio al frente, si lo que tienes al frente no es otro =
 				if(linea.charAt(i+1) != '=') {
-					linea = linea.substring(0, i+1) + " " + linea.substring(1+i++, linea.length()); // incrementa en uno i, para evadir el espacio aÒadido
+					linea = linea.substring(0, i+1) + " " + linea.substring(1+i++, linea.length()); // incrementa en uno i, para evadir el espacio a√±adido
 				}
 			}
 			else if(linea.charAt(i) == '!' || linea.charAt(i) == '<' || linea.charAt(i) == '>') {
-				linea = linea.substring(0, i) + " " + linea.substring(i++, linea.length()); // incrementa en uno i, para evadir el espacio aÒadido
+				linea = linea.substring(0, i) + " " + linea.substring(i++, linea.length()); // incrementa en uno i, para evadir el espacio a√±adido
 				if(linea.length() > i+1)
 					if(linea.charAt(i+1) != '=') {
-						linea = linea.substring(0, i+1) + " " + linea.substring(1+i++, linea.length()); // incrementa en uno i, para evadir el espacio aÒadido
+						linea = linea.substring(0, i+1) + " " + linea.substring(1+i++, linea.length()); // incrementa en uno i, para evadir el espacio a√±adido
 					}
 			}
 			else if("(){}[];/".contains(linea.charAt(i)+"")) {
@@ -172,7 +174,11 @@ public class AnalizadorLexico {
 						continue;
 					}
 				linea = linea.substring(0, i) + " " + linea.charAt(i) + " " + linea.substring(1+i, linea.length());
-				i+=2; // incrementa en dos i, para evadir los dos espacios aÒadidos
+				i+=2; // incrementa en dos i, para evadir los dos espacios a√±adidos
+			}
+			else if("+-*/".contains(linea.charAt(i) + "")) {
+				linea = linea.substring(0, i) + " " + linea.charAt(i) + " " + linea.substring(1+i, linea.length());
+				i+=2; // incrementa en dos i, para evadir los dos espacios a√±adidos
 			}
 		return linea;
 	}

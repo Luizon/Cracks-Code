@@ -22,7 +22,8 @@ public class Statics {
 		enteroInt = 9,
 		parentesisInt = 10,
 		llaveInt = 11,
-		dobleInt = 12;
+		dobleInt = 12,
+		expresionAlgebraicaInt = 13;
 	public final static String [] tipoDeToken = {
 		"Palabra resevada", // 0
 		"Tipo de dato", // 1
@@ -37,11 +38,12 @@ public class Statics {
 		"Parentesis", // 10, ()
 		"Llave", // 11, {}
 		"Doble", // 12
+		"Expresion Algebraica", // 13
 	};
 	public final static String[]
 		alcance = {"global", "local"},
 		palabraReservada = {"if","while"},
-		tipoDeDato = {"int", "string", "boolean", "double", "class"}, // de dato y de otra cosas, por comodidad mÌa xd
+		tipoDeDato = {"int", "string", "boolean", "double", "class"}, // de dato y de otra cosas, por comodidad m√≠a xd
 		signo = {"=",";"},
 		operadorLogico = {"<","<=",">",">=","==","!=","&&","||"},
 		operadorAritmetico = {"+","-","*","/"},
@@ -53,13 +55,27 @@ public class Statics {
 			+ "	font-style: italic;"
 			+ "}"
 			+ "p {" // para el error
-			+ "	color: #DD0000"
+			+ "	color: #DD0000;"
 			+ "}"
 			+ "em {" // para el warning
-			+ "	color: #888800"
+			+ "	color: #888800;"
 			+ "}"
-			+ "var {" // para lo verde bonito ac· bien
-			+ "	color: #008800"
+			+ "var {" // para lo verde bonito ac√° bien
+			+ "	color: #008800;"
+			+ "}";
+	public final static String tablaCss =
+			"strong {" // para destacar los titulos y las lineas
+			+ "	color: #0000BB;"
+			+ "}"
+			+ "p {" // para destacar los titulos y las lineas
+			+ "	color: #00AA88;"
+			+ "}"
+			+ "em {" // para el contenido de las celdas
+			+ "	color: #008800;"
+			+ "	font-weight: bold;"
+			+ "}"
+			+ "var {" // para el t√≠tulo principal
+			+ "	color: #008800;"
 			+ "}";
 	
 	///////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +135,20 @@ public class Statics {
 		if(str.equals("function"))
 			return 5; // funcion
 		return -1;
+	}
+	
+	static public String centrarString(String texto, int caracteres) {
+		return centrarString(texto, caracteres, " ");
+	}
+	static public String centrarString(String texto, int caracteres, String relleno) {
+		int espaciosExtra = caracteres - texto.length();
+		for(int i=0 ; i < espaciosExtra ; i++) {
+			if(i % 2 == 0)
+				texto+=relleno;
+			else
+				texto = relleno + texto;
+		}
+		return texto;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////

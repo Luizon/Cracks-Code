@@ -1,11 +1,11 @@
-// nada tiene que ver con el compilador ni con el Crack's Code, s髄o fue creado a modo de pr醕tica y no sab韆 donde meterlo xd
+// nada tiene que ver con el compilador ni con el Crack's Code, s贸lo fue creado a modo de pr谩ctica y no sab铆a donde meterlo xd
 package misc;
 
 import java.util.Scanner;
 import java.util.Stack;
 
 public class CambioDeNotacion {
-	final String caracteresValidos = "abcdefghijklmn駉pqrstuvwxyzABCDEFGHIJKLMN袿PQRSTUVWXYZ0123456789";
+	final String caracteresValidos = "abcdefghijklmn帽opqrstuvwxyzABCDEFGHIJKLMN脩OPQRSTUVWXYZ0123456789";
 	final String operadoresValidos = "+-/*^";
 	final String parentesisValidos = "()";
 	final String todo = caracteresValidos + operadoresValidos + parentesisValidos;
@@ -17,18 +17,18 @@ public class CambioDeNotacion {
 		lee = new Scanner(System.in);
 		String respuesta = "";
 		while(true) {
-			System.out.print("Escriba su expresi髇 infija: ");
+			System.out.print("Escriba su expresi贸n infija: ");
 			respuesta = lee.nextLine();
 			if(parentesisCorrectos(respuesta) && respuesta.length() > 0 && !respuesta.equalsIgnoreCase("salir")) {
-				System.out.println("Notaci髇 postfija: "+aPostfija(respuesta));
-				System.out.println("Notaci髇 prefija: "+aPrefija(respuesta));
+				System.out.println("Notaci贸n postfija: "+aPostfija(respuesta));
+				System.out.println("Notaci贸n prefija: "+aPrefija(respuesta));
 			}
 			else if(respuesta.equalsIgnoreCase("salir"))
 				break;
 			else if(!parentesisCorrectos(respuesta))
 				System.out.println("Parentesis mal puestos");
 			else
-				System.out.println("Escriba su expresi髇 pls, o \"salir\" para terminar el programa");
+				System.out.println("Escriba su expresi贸n pls, o \"salir\" para terminar el programa");
 			ponBarras();
 		}
 		ponBarras();
@@ -94,7 +94,7 @@ public class CambioDeNotacion {
 				}
 			}
 			else 
-				return "Expresi髇 con caracteres inv醠idos";
+				return "Expresi贸n con caracteres inv谩lidos";
 		}
 		while(!pila.isEmpty()) {
 			salida+= pila.peek();
@@ -158,7 +158,7 @@ public class CambioDeNotacion {
 				}
 			}
 			else 
-				return "Expresi髇 con caracteres inv醠idos";
+				return "Expresi贸n con caracteres inv谩lidos";
 		}
 		while(!pila.isEmpty()) {
 			salida+= pila.peek();

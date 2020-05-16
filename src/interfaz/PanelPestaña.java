@@ -13,14 +13,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class PanelPestaña extends JPanel implements MouseListener {
+public class PanelPestaÃ±a extends JPanel implements MouseListener {
 	private JLabel etiqueta;
 	public JButton boton;
 	private Vista vista;
 	private int id;
 	private ImageIcon iconoCerrarTab;
 
-	public PanelPestaña(String titulo, String toolTipText, Vista vista, int id) {
+	public PanelPestaÃ±a(String titulo, String toolTipText, Vista vista, int id) {
 		this.id = id;
 		setFocusable(false);
 		this.vista = vista;
@@ -38,7 +38,7 @@ public class PanelPestaña extends JPanel implements MouseListener {
 	    
 	    boton=new JButton();
 	    boton.setFocusable(false);
-	    iconoCerrarTab = vista.icoCerrarPestaña;
+	    iconoCerrarTab = vista.icoCerrarPestaÃ±a;
 	    int btnWidth = iconoCerrarTab.getIconWidth(),
     		btnHeight = iconoCerrarTab.getIconHeight();
 	    
@@ -87,7 +87,7 @@ public class PanelPestaña extends JPanel implements MouseListener {
 			public void actionPerformed(ActionEvent evt) {
 				for(int borrarTab=0; borrarTab < vista.codigoTabs.getTabCount()-1; borrarTab++)
 					if(vista.titulo.getByIndex(borrarTab).dato.id == id)
-						vista.cerrarPestaña(borrarTab);
+						vista.cerrarPestaÃ±a(borrarTab);
 			}
 		});
 		boton.addMouseListener(new MouseListener() {

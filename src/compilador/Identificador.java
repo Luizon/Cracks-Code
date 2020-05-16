@@ -6,14 +6,14 @@ public class Identificador {
 	private String nombre,
 		valor;
 	private boolean alcanceTerminado;
-	private int posicion, // linea del cÛdigo
+	private int posicion, // linea del c√≥digo
 		alcance,
 		tipo,
 		id; // es usada para ordenar los identificadores antes de mostrarlos en la tabla
 	
 	public Identificador(int posicion, int alcance, int tipo, String nombre, String valor, int id) {
 		this.posicion = posicion;
-		this.alcance = alcance; // 0: global, otro: local (el valor que sea ser· a quien pertenece)
+		this.alcance = alcance; // 0: global, otro: local (el valor que sea ser√° a quien pertenece)
 		this.tipo = tipo;
 		this.nombre = nombre;
 		this.valor = valor;

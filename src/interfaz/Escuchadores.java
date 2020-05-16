@@ -56,9 +56,9 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		else
 			vista.titulo.getByIndex(tab).dato.setIcon(vista.icoCode);
 	}
-	private void cerrarPestaña() {
+	private void cerrarPestaÃ±a() {
 		if(teclaControl) {
-			vista.cerrarPestaña();
+			vista.cerrarPestaÃ±a();
 		}
 	}
 	@Override
@@ -122,7 +122,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				break;
 			case KeyEvent.VK_W:
 				if(teclaControl) {
-					cerrarPestaña();
+					cerrarPestaÃ±a();
 				}
 				break;
 			case KeyEvent.VK_PERIOD:
@@ -167,7 +167,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				+ "\trutas de archivo actual: " + vista.rutaDeArchivoActual.length() + "\n"
 				+ "\tnombres de archivos: " + vista.nombreDelArchivo.length() + "\n"
 				+ "\ttitulos de ventana: " + vista.tituloVentana.length() + "\n"
-				+ "\ttamaños de textos del editor: " + vista.tamañoTextoDelEditor.length() + "\n"
+				+ "\ttamaÃ±os de textos del editor: " + vista.tamaÃ±oTextoDelEditor.length() + "\n"
 				+ "\tcambios guardados: " + vista.cambiosGuardados.length() + "\n"
 				+ "]");
 				break;
@@ -177,15 +177,15 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 	@Override
 	public void keyReleased(KeyEvent key) {
 		final int tabs = vista.getSelectedTab();
-		if(key.getSource() == vista.txtCodigo.getByIndex(tabs).dato) { // Si estás en el editor de código
-			if(vista.txtCodigo.getByIndex(tabs).dato.getText().length() != vista.tamañoTextoDelEditor.getByIndex(tabs).dato) { // entra sólo si escribiste sobre txtCodigo
+		if(key.getSource() == vista.txtCodigo.getByIndex(tabs).dato) { // Si estÃ¡s en el editor de cÃ³digo
+			if(vista.txtCodigo.getByIndex(tabs).dato.getText().length() != vista.tamaÃ±oTextoDelEditor.getByIndex(tabs).dato) { // entra sÃ³lo si escribiste sobre txtCodigo
 				if(vista.rutaDeArchivoActual.getByIndex(tabs).dato.length() == 0)
 					vista.setTitle("*archivo no guardado - CRACK'S Code");
 				else
 					vista.setTitle("*" + vista.nombreDelArchivo.getByIndex(tabs).dato + " - " + vista.rutaDeArchivoActual.getByIndex(tabs).dato + " - CRACK'S Code");
 				vista.tituloVentana.getByIndex(tabs).dato = vista.getTitle();
 				vista.codigoTabs.setTitleAt(vista.getSelectedTab(), "*" + vista.nombreDelArchivo.getByIndex(tabs).dato);
-				vista.tamañoTextoDelEditor.getByIndex(tabs).dato = vista.txtCodigo.getByIndex(tabs).dato.getText().length();
+				vista.tamaÃ±oTextoDelEditor.getByIndex(tabs).dato = vista.txtCodigo.getByIndex(tabs).dato.getText().length();
 				vista.cambiosGuardados.getByIndex(tabs).dato = false;
 			}
 		}
@@ -208,7 +208,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		}
 	}
 	@Override
-	public void keyTyped(KeyEvent key) { // sólo para teclas de escritura; como letras, números, símbolos, etc. No jala con teclas como control, alt, fin, etc.
+	public void keyTyped(KeyEvent key) { // sÃ³lo para teclas de escritura; como letras, nÃºmeros, sÃ­mbolos, etc. No jala con teclas como control, alt, fin, etc.
 		int tabs = vista.codigoTabs.getSelectedIndex();
 		String archivoNombre = vista.nombreDelArchivo.getByIndex(tabs).dato;
 		if(teclaControl)
@@ -218,7 +218,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource() == vista.nuevoArchivo) {
-			vista.nuevaPestaña();
+			vista.nuevaPestaÃ±a();
 			return;
 		}
 		if(evt.getSource() == vista.cargarArchivo) {
@@ -247,15 +247,19 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			String codigoAGuardar = vista.txtCodigo.getByIndex(tabs).dato.getText();
 			Statics.guardarArchivo(vista.archivoTemporal.getAbsolutePath(), codigoAGuardar);
 			ArrayList<Token> tokens = new ArrayList<Token>();
-			ArrayList<String> listaDeImpresiones = new ArrayList<String>();
+			ArrayList<String> listaDeImpresiones = new ArrayList<String>(),
+				listaDeCuadruplos = new ArrayList<String>();
 			boolean analisisCorrecto = AnalizadorLexico.analizaCodigoDesdeArchivo(listaDeImpresiones, tokens, vista.archivoTemporal.getAbsolutePath());
-			if(analisisCorrecto && codigoAGuardar.length() > 0) {
-				analisisCorrecto = AnalizadorSintactico.parentesisCorrectos(tokens, listaDeImpresiones);
-			}
-			if(analisisCorrecto && codigoAGuardar.length() > 0) {
-				analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, tokens, new HashMap<String, Identificador>(), vista.tablaDatos, vista.tituloTabla);
+			if(tokens.size() > 1) {
+				if(analisisCorrecto) {
+					analisisCorrecto = AnalizadorSintactico.analizaTokens(listaDeImpresiones, tokens);
+				}
+				if(analisisCorrecto) {
+					analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, listaDeCuadruplos, tokens, new HashMap<String, Identificador>(), vista.tablaDatos, vista.tituloTabla);
+				}
 			}
 			vista.consola.setListData(Statics.deArrayDinamicaAEstatica(listaDeImpresiones));
+			vista.cuadruplos.setListData(Statics.deArrayDinamicaAEstatica(listaDeCuadruplos));
 			
 			vista.hayError = !analisisCorrecto;
 			modificaTitulos();
@@ -301,7 +305,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				texto+= "No ha guardado los cambios realizados en <b>un archivo</b>";
 			else
 				texto+= "No ha guardado los cambios realizados en <b>" + archivosSinGuardar + " archivos</b>";
-			texto+= "<br />¿Desea guardar los cambios antes de salir?";
+			texto+= "<br />Â¿Desea guardar los cambios antes de salir?";
 			
 			teclaShift = teclaAlt = teclaControl = false;
 			String css = 
@@ -358,7 +362,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		int tabs = vista.getSelectedTab();
 		vista.setTitle(vista.tituloVentana.getByIndex(tabs).dato);
 		if(!a.getSource().equals(consola) && !a.getSource().equals(datos))
-			vista.actualizarBotonesDePestañas();
+			vista.actualizarBotonesDePestaÃ±as();
 	}
 	@Override
 	public void ancestorMoved(AncestorEvent a) {

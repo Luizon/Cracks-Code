@@ -1,6 +1,6 @@
 package interfaz;
 
-// no lo implementaré de momento, pero luego le echaré una mano a esto que copíe de StackOverflow xd
+// no lo implementarÃ© de momento, pero luego le echarÃ© una mano a esto que copÃ­e de StackOverflow xd
 
 import java.awt.Component;
 import java.awt.Graphics;

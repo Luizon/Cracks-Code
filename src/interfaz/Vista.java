@@ -13,13 +13,16 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,6 +37,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -64,17 +68,18 @@ public class Vista extends JFrame implements Serializable {
 	public ListaDoble<String> rutaDeArchivoActual,
 		nombreDelArchivo,
 		tituloVentana;
-	public ListaDoble<Integer> tamañoTextoDelEditor;
+	public ListaDoble<Integer> tamaÃ±oTextoDelEditor;
 	public ListaDoble<Boolean> cambiosGuardados;
-	public ListaDoble<PanelPestaña> titulo;
+	public ListaDoble<PanelPestaÃ±a> titulo;
 	private ArrayList<String[]> listaArchivosRecientes;
-	public JList<String> consola;
+	public JList<String> consola,
+		cuadruplos;
 	public Escuchadores escuchadores;
 	public int tabulaciones = 0,
 		tema = Theme.CLARO,
 		posicionRelativaDelDividorDeLosTabbedPane = 0;
-	public boolean hayError = false; // hacer algo con esto después, no me gusta
-	public final String [] tituloTabla = new String[]{"Posición", "Alcance", "Tipo", "Simbolo", "Valor"};
+	public boolean hayError = false; // hacer algo con esto despuÃ©s, no me gusta
+	public final String [] tituloTabla = new String[]{"PosiciÃ³n", "Alcance", "Tipo", "Simbolo", "Valor"};
 	public DefaultTableModel modelo;
 	public JTable tablaDatos;
 	private final String carpetaDeAppData = System.getenv("APPDATA") + "/Cracks Code/",
@@ -87,8 +92,8 @@ public class Vista extends JFrame implements Serializable {
 		icoError,
 		icoDone,
 		icoTable,
-		icoCerrarPestaña;
-	private int contadorDePestañas = 0;
+		icoCerrarPestaÃ±a;
+	private int contadorDePestaÃ±as = 0;
 	private Object[] sesion;
 	public Font fontHeader = new Font("Arial", Font.BOLD, 17),
 			fuenteConsola = new Font("Consolas", Font.PLAIN, 16);
@@ -115,22 +120,22 @@ public class Vista extends JFrame implements Serializable {
 		creaMenu();
 		crearIconos();
 		codigoTabs = new JTabbedPane();
-		codigoTabs.insertTab("", iconoNuevoTab, null, "Nueva pestaña", codigoTabs.getTabCount());
+		codigoTabs.insertTab("", iconoNuevoTab, null, "Nueva pestaÃ±a", codigoTabs.getTabCount());
 		codigoTabs.setSelectedIndex(codigoTabs.getTabCount()-1);
 		cargarUltimoTemaUsado();
 		Theme.changeTheme(this);
 		creaFicheroTemporal();
-//		if(!reanudarSesionAnterior()) { // no funciona bien, ya luego lo repararé
-			titulo = new ListaDoble<PanelPestaña>();
+//		if(!reanudarSesionAnterior()) { // no funciona bien, ya luego lo repararÃ©
+			titulo = new ListaDoble<PanelPestaÃ±a>();
 			rutaDeArchivoActual = new ListaDoble<String>();
 			nombreDelArchivo = new ListaDoble<String>();
 			tituloVentana = new ListaDoble<String>();
-			tamañoTextoDelEditor = new ListaDoble<Integer>();
+			tamaÃ±oTextoDelEditor = new ListaDoble<Integer>();
 			cambiosGuardados = new ListaDoble<Boolean>();
 			txtCodigo = new ListaDoble<JTextPane>();
-			nuevaPestaña();
+			nuevaPestaÃ±a();
 //		}
-		crearPestañasDeAbajo();
+		crearPestaÃ±asDeAbajo();
 		
 		setVisible(true);
 
@@ -142,19 +147,19 @@ public class Vista extends JFrame implements Serializable {
 				+ "\trutas de archivo actual: " + rutaDeArchivoActual.length() + "\n"
 				+ "\tnombres de archivos: " + nombreDelArchivo.length() + "\n"
 				+ "\ttitulos de ventana: " + tituloVentana.length() + "\n"
-				+ "\ttamaños de textos del editor: " + tamañoTextoDelEditor.length() + "\n"
+				+ "\ttamaÃ±os de textos del editor: " + tamaÃ±oTextoDelEditor.length() + "\n"
 				+ "\tcambios guardados: " + cambiosGuardados.length() + "\n"
 				+ "]");/**/
 	}
 	
 	private void crearIconos() {
-		iconoNuevoTab = new ImageIcon("src/images/pestañaNueva.png");
+		iconoNuevoTab = new ImageIcon("src/images/pestaÃ±aNueva.png");
 		icoCode = new ImageIcon(Statics.getImage("code"));
 		icoBug = new ImageIcon(Statics.getImage("bug"));
 		icoError = new ImageIcon(Statics.getImage("error"));
 		icoDone = new ImageIcon(Statics.getImage("done"));
 		icoTable = new ImageIcon(Statics.getImage("table"));
-		icoCerrarPestaña = new ImageIcon("src/images/cerrarPestaña.png");
+		icoCerrarPestaÃ±a = new ImageIcon("src/images/cerrarPestaÃ±a.png");
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" }) // unused pero de momento xd
@@ -176,21 +181,21 @@ public class Vista extends JFrame implements Serializable {
 			ois.close();
 			fis.close();
 		} catch (ClassNotFoundException | IOException | NullPointerException e) {
-			System.out.println("Hubo un problema al leer los datos de la última sesión.");
+			System.out.println("Hubo un problema al leer los datos de la Ãºltima sesiÃ³n.");
 			e.printStackTrace();
 			return false;
 		} catch (Exception e) {
-			System.out.println("Hubo un problema al leer los datos de la última sesión."
-					+ "\nNi idea de porque ocurrió este problema.");
+			System.out.println("Hubo un problema al leer los datos de la Ãºltima sesiÃ³n."
+					+ "\nNi idea de porque ocurriÃ³ este problema.");
 			e.printStackTrace();
 			return false;
 		}
 		
-		titulo = (ListaDoble<PanelPestaña>)sesion[0];
+		titulo = (ListaDoble<PanelPestaÃ±a>)sesion[0];
 		rutaDeArchivoActual = (ListaDoble<String>)sesion[1];
 		nombreDelArchivo = (ListaDoble<String>)sesion[2];
 		tituloVentana = (ListaDoble<String>)sesion[3];
-		tamañoTextoDelEditor = (ListaDoble<Integer>)sesion[4];
+		tamaÃ±oTextoDelEditor = (ListaDoble<Integer>)sesion[4];
 		cambiosGuardados = (ListaDoble<Boolean>)sesion[5];
 		txtCodigo = (ListaDoble<JTextPane>)sesion[6];
 		
@@ -199,7 +204,7 @@ public class Vista extends JFrame implements Serializable {
 			String texto = txtCodigo.getByIndex(i).dato.getText(),
 				ruta = rutaDeArchivoActual.getByIndex(i).dato,
 				nombre = nombreDelArchivo.getByIndex(i).dato;
-			nuevaPestaña(texto, ruta, nombre, -1);
+			nuevaPestaÃ±a(texto, ruta, nombre, -1);
 			titulo.getByIndex(i).dato.cargaEscuchadores();
 			codigoTabs.setTabComponentAt(Math.max(0, i), titulo.getByIndex(i).dato);
 		}
@@ -207,13 +212,13 @@ public class Vista extends JFrame implements Serializable {
 		return true;
 	}
 	
-	public void guardarSesion() { // unused pero de momento xd
+	public void guardarSesion() { // unused de momento xd
 		sesion = new Object[]{
 				titulo, // 0
 				rutaDeArchivoActual, // 1
 				nombreDelArchivo, // 2
 				tituloVentana, // 3
-				tamañoTextoDelEditor, // 4
+				tamaÃ±oTextoDelEditor, // 4
 				cambiosGuardados, //5
 				txtCodigo}; //6
 		try {
@@ -225,7 +230,7 @@ public class Vista extends JFrame implements Serializable {
 			oos.writeObject(sesion);
 			fis.close();
 		} catch (IOException e) {
-			System.out.println("Hubo un problema al guardar los datos de la sesión actual.");
+			System.out.println("Hubo un problema al guardar los datos de la sesiÃ³n actual.");
 			e.printStackTrace();
 		}
 	}
@@ -275,7 +280,7 @@ public class Vista extends JFrame implements Serializable {
 		menuArchivosRecientes.setIcon(new ImageIcon(Statics.getImage("recent2")));
 		salir = new JMenuItem(Statics.getHTML(l+"Salir "+a+"(alt+F4)", css));
 		salir.setIcon(new ImageIcon(Statics.getImage("exit2")));
-		compilarCodigo = new JMenuItem(Statics.getHTML(l+"Compilar código "+a+"(F5)", css));
+		compilarCodigo = new JMenuItem(Statics.getHTML(l+"Compilar cÃ³digo "+a+"(F5)", css));
 		compilarCodigo.setIcon(new ImageIcon(Statics.getImage("run2")));
 		cambiarTema = new JMenuItem(Statics.getHTML(l+"Cambiar de tema"+a+"(F11)", css));
 		cambiarTema.setIcon(new ImageIcon(Statics.getImage("theme2")));
@@ -302,7 +307,7 @@ public class Vista extends JFrame implements Serializable {
 	public void cambiarTema() {
 		if(tema == Theme.CLARO) {
 			tema = Theme.OSCURO;
-		} else { // si no es claro el que traías, traías el oscuro, cambias al claro
+		} else { // si no es claro el que traÃ­as, traÃ­as el oscuro, cambias al claro
 			tema = Theme.CLARO;
 		}
 		Theme.changeTheme(this);
@@ -322,8 +327,8 @@ public class Vista extends JFrame implements Serializable {
 			temaACargar = lector.read();
 			lector.close();
 		} catch (IOException e) {
-			System.out.println("Hubo un problema al leer los datos del último tema usado."
-				+ "\nSe cargó el tema por defecto.");
+			System.out.println("Hubo un problema al leer los datos del Ãºltimo tema usado."
+				+ "\nSe cargÃ³ el tema por defecto.");
 			e.printStackTrace();
 		}
 		
@@ -337,15 +342,15 @@ public class Vista extends JFrame implements Serializable {
         	escritor.write(tema);
 	    	escritor.close();
 		} catch (IOException e) {
-			System.out.println("Hubo un problema al leer los datos del último tema usado."
-				+ "\nSe cargó el tema por defecto.");
+			System.out.println("Hubo un problema al leer los datos del Ãºltimo tema usado."
+				+ "\nSe cargÃ³ el tema por defecto.");
 			e.printStackTrace();
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void cargaArchivosRecientes() {
-		listaArchivosRecientes = new ArrayList<String[]>(); // si lo siguiente falla, este crack estará vacío
+		listaArchivosRecientes = new ArrayList<String[]>(); // si lo siguiente falla, este crack estarÃ¡ vacÃ­o
 		try {
 	    	// verificar si la carpeta existe
         	if(!Files.exists(Paths.get(carpetaDeAppData))) {
@@ -391,11 +396,11 @@ public class Vista extends JFrame implements Serializable {
 		}
 	}
 	
-	private void añadirArchivoARecientes(String nombre, String ruta) {
+	private void aÃ±adirArchivoARecientes(String nombre, String ruta) {
 		try {
 			for(int i=0; i<listaArchivosRecientes.size(); i++) {
-				if(ruta.equals(listaArchivosRecientes.get(i)[1])) // si la ruta ya está guardada en uno de los archivos recientes
-					listaArchivosRecientes.remove(i); // la borras, así se añade abajo y se posiciona hasta arriba
+				if(ruta.equals(listaArchivosRecientes.get(i)[1])) // si la ruta ya estÃ¡ guardada en uno de los archivos recientes
+					listaArchivosRecientes.remove(i); // la borras, asÃ­ se aÃ±ade abajo y se posiciona hasta arriba
 			}
 			listaArchivosRecientes.add(0, new String[]{nombre, ruta});
 	    	FileOutputStream fis = new FileOutputStream(archivoDeArchivosRecientes);
@@ -410,19 +415,26 @@ public class Vista extends JFrame implements Serializable {
 		cargaArchivosRecientes();
 	}
 	
-	private void crearPestañasDeAbajo() {
+	private void crearPestaÃ±asDeAbajo() {
 		bottomTabs = new JTabbedPane();
-		consola=new JList<String>();
+		consola = new JList<String>();
+		cuadruplos = new JList<String>();
 		consola.setFont(fuenteConsola);
-		JScrollPane pestañaConsola = new JScrollPane(consola);
+		cuadruplos.setFont(fuenteConsola);
+		DefaultListCellRenderer renderer = (DefaultListCellRenderer)cuadruplos.getCellRenderer();
+		renderer.setHorizontalAlignment(SwingConstants.CENTER);
+		JScrollPane pestaÃ±aConsola = new JScrollPane(consola);
+		JScrollPane pestaÃ±aCuadruplos = new JScrollPane(cuadruplos);
 		modelo = new DefaultTableModel(new Object[0][0], tituloTabla);
 		tablaDatos = new JTable(modelo);
 		tablaDatos.getTableHeader().setFont(fontHeader);
-		JScrollPane pestañaDatos = new JScrollPane(tablaDatos);
-		pestañaConsola.setFocusable(false);
-		pestañaDatos.setFocusable(false);
-		bottomTabs.insertTab("Consola", icoBug, pestañaConsola, "Consola con información del último código compilado", 0);
-		bottomTabs.insertTab("Datos", icoTable, pestañaDatos, "Tabla con datos guardados del último código compilado", 1);
+		JScrollPane pestaÃ±aDatos = new JScrollPane(tablaDatos);
+		pestaÃ±aConsola.setFocusable(false);
+		pestaÃ±aCuadruplos.setFocusable(false);
+		pestaÃ±aDatos.setFocusable(false);
+		bottomTabs.insertTab("Consola", icoBug, pestaÃ±aConsola, "Consola con informaciÃ³n del Ãºltimo cÃ³digo compilado", 0);
+		bottomTabs.insertTab("Datos", icoTable, pestaÃ±aDatos, "Tabla con datos guardados del Ãºltimo cÃ³digo compilado", 1);
+		bottomTabs.insertTab("Cuadruplos", icoTable, pestaÃ±aCuadruplos, "Tablas de cuadruplos de expresiones encontradas en el Ãºltimo cÃ³digo compilado", 2);
 		
 		dividor = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		posicionRelativaDelDividorDeLosTabbedPane = 300;
@@ -438,24 +450,25 @@ public class Vista extends JFrame implements Serializable {
 			archivoTemporal.deleteOnExit();
 		}
 		catch (Exception e) {
-			System.out.println("Error al guardar el archivo temporal para compilar su código.");
+			System.out.println("Error al guardar el archivo temporal para compilar su cÃ³digo.");
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null,"Error al guardar el archivo temporal para compilar su código.","Alerta",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,"Error al guardar el archivo temporal para compilar su cÃ³digo.","Alerta",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
 	private void agregaEscuchadores() {
-		// Evitar que cualquier vaina pueda tener foco, sólo el texto ocupa tener foco, creo yo
+		// Evitar que cualquier vaina pueda tener foco, sÃ³lo el texto ocupa tener foco, creo yo
 			// El mismo JFrame
 				setFocusable(false);
-			// Paneles de pestañas
+			// Paneles de pestaÃ±as
 				dividor.setFocusable(false);
 					codigoTabs.setFocusable(false);
 					bottomTabs.setFocusable(false);
 
-			// Paneles de las pestañas
+			// Paneles de las pestaÃ±as
 				tablaDatos.setFocusable(false);
-				consola.setFocusable(false); // la wea de la pestaña Consola
+				consola.setFocusable(false); // la wea de la pestaÃ±a Consola
+				cuadruplos.setFocusable(false); // la wea de la pestaÃ±a Consola
 				
 			// Los menus
 				menuArchivo.setFocusable(false);
@@ -493,7 +506,7 @@ public class Vista extends JFrame implements Serializable {
 					ayuda.addActionListener(escuchadores);
 					acercaDe.addActionListener(escuchadores);
 				
-			// Cambio entre pestañas
+			// Cambio entre pestaÃ±as
 				consola.addAncestorListener(escuchadores);
 				tablaDatos.addAncestorListener(escuchadores);
 				codigoTabs.addMouseListener(escuchadores);
@@ -504,14 +517,20 @@ public class Vista extends JFrame implements Serializable {
 				addWindowListener(escuchadores);
 	}
 	
-	public void nuevaPestaña(String texto, String ruta, String nombre, int tamaño) {
+	public void nuevaPestaÃ±a(String texto, String ruta, String nombre, int tamaÃ±o) {
 		int tabs = codigoTabs.getTabCount();
-		if(tamaño >= 0) { // significa que es una adición normal
+		if(tamaÃ±o >= 0) { // significa que es una adiciÃ³n normal
 			if(texto.length() == 0) {
-				texto = "Puro crack aquí.";
-				tamaño = texto.length();
+				texto = "Puro crack aquÃ­.";
+				tamaÃ±o = texto.length();
 			}
-			JTextPane cajaDeTexto = new JTextPane();
+			JTextPane cajaDeTexto = new JTextPane() {
+				public boolean getScrollableTracksViewportWidth()
+			    {
+			        return getUI().getPreferredSize(this).width 
+			            <= getParent().getSize().width;
+			    }
+			};
 			cajaDeTexto.setText(texto);
 			txtCodigo.insertar(cajaDeTexto);
 			cajaDeTexto.setFont(fuenteConsola);
@@ -523,49 +542,49 @@ public class Vista extends JFrame implements Serializable {
 				tituloVentana.insertar("CRACK'S Code");
 			else
 				tituloVentana.insertar(nombre + " - " + ruta + " - CRACK'S Code");
-			tamañoTextoDelEditor.insertar(tamaño);
+			tamaÃ±oTextoDelEditor.insertar(tamaÃ±o);
 			cambiosGuardados.insertar(true);
-		} // de ser tamaño un negativo es porque se quiere la pura pestaña y los datos anteriores ya se tienen
+		} // de ser tamaÃ±o un negativo es porque se quiere la pura pestaÃ±a y los datos anteriores ya se tienen
 		
 		CodePane codePane = new CodePane(txtCodigo.getByIndex(tabs-1).dato);
 		Theme.changeTheme(codePane, tema);
 		
-		codigoTabs.insertTab("esto no debería salir nunca", null, codePane, "Archivo sin guardar", tabs);
-		if(tamaño >=0) {
+		codigoTabs.insertTab("esto no deberÃ­a salir nunca", null, codePane, "Archivo sin guardar", tabs);
+		if(tamaÃ±o >=0) {
 			String toolTipText = ruta;
 			if(ruta.length() == 0)
 				toolTipText = "Archivo sin guardar";
-			PanelPestaña panelPestaña = new PanelPestaña(nombre, toolTipText, this, contadorDePestañas++);
-			titulo.insertar(panelPestaña);
-			codigoTabs.setTabComponentAt(Math.max(0, tabs), panelPestaña);
+			PanelPestaÃ±a panelPestaÃ±a = new PanelPestaÃ±a(nombre, toolTipText, this, contadorDePestaÃ±as++);
+			titulo.insertar(panelPestaÃ±a);
+			codigoTabs.setTabComponentAt(Math.max(0, tabs), panelPestaÃ±a);
 		}
 		
 		codigoTabs.removeTabAt(codigoTabs.getTabCount()-2); // elimina el +
-		codigoTabs.insertTab("", iconoNuevoTab, null, "Nueva pestaña", codigoTabs.getTabCount()); // añade el +
-		codigoTabs.setSelectedIndex(codigoTabs.getTabCount()-2); // selecciona la última pestaña código
+		codigoTabs.insertTab("", iconoNuevoTab, null, "Nueva pestaÃ±a", codigoTabs.getTabCount()); // aÃ±ade el +
+		codigoTabs.setSelectedIndex(codigoTabs.getTabCount()-2); // selecciona la Ãºltima pestaÃ±a cÃ³digo
 		
 		txtCodigo.getByIndex(tabs-1).dato.requestFocus();
-//		System.out.println("tamaño del texto: "+tamaño);
+//		System.out.println("tamaÃ±o del texto: "+tamaÃ±o);
 	}
 	
-	public void actualizarBotonesDePestañas() {
+	public void actualizarBotonesDePestaÃ±as() {
 		for(int i=0; i<titulo.length(); i++)
 			if(i != getSelectedTab())
 				titulo.getByIndex(i).dato.boton.setIcon(null);
 			else
-				titulo.getByIndex(i).dato.boton.setIcon(icoCerrarPestaña);
+				titulo.getByIndex(i).dato.boton.setIcon(icoCerrarPestaÃ±a);
 	}
 
-	public void nuevaPestaña() {
-		nuevaPestaña("", "", "Sin título", 0);
+	public void nuevaPestaÃ±a() {
+		nuevaPestaÃ±a("", "", "Sin tÃ­tulo", 0);
 	}
 	
-	public void cerrarPestaña(int tabs) {
+	public void cerrarPestaÃ±a(int tabs) {
 		if(!cambiosGuardados.getByIndex(tabs).dato) {
 			Escuchadores es = escuchadores;
 			es.teclaShift = es.teclaAlt = es.teclaControl = false;
 			String texto = "<div>No ha guardado los cambios hechos en <b><u>"+nombreDelArchivo.getByIndex(tabs).dato+"</u></b>."
-					+ "<br />¿Desea guardar los cambios antes de cerrar la pestaña?";
+					+ "<br />Â¿Desea guardar los cambios antes de cerrar la pestaÃ±a?";
 			String css = 
 					"div {"
 					+ "	text-align: center;"
@@ -588,11 +607,11 @@ public class Vista extends JFrame implements Serializable {
 		rutaDeArchivoActual.borrar(tabs);
 		nombreDelArchivo.borrar(tabs);
 		tituloVentana.borrar(tabs);
-		tamañoTextoDelEditor.borrar(tabs);
+		tamaÃ±oTextoDelEditor.borrar(tabs);
 		cambiosGuardados.borrar(tabs);
 		codigoTabs.remove(tabs);
 		if(codigoTabs.getTabCount()==1) {
-			nuevaPestaña();
+			nuevaPestaÃ±a();
 			txtCodigo.getByIndex(getSelectedTab()).dato.requestFocus();
 		}
 		int tabASeleccionar = getSelectedTab();
@@ -602,46 +621,39 @@ public class Vista extends JFrame implements Serializable {
 		txtCodigo.getByIndex(tabASeleccionar).dato.requestFocus();
 	}
 	
-	public void cerrarPestaña() {
-		cerrarPestaña(getSelectedTab());
+	public void cerrarPestaÃ±a() {
+		cerrarPestaÃ±a(getSelectedTab());
 	}
 	
 	private void cargarArchivo(String ruta) {
 		try {
-			FileReader archivo;
-			BufferedReader lector;
+			InputStreamReader inputStreamReader;
 			File fichero = new File(ruta);
-			archivo = new FileReader(fichero);
+			FileInputStream ficheroInputStream = new FileInputStream(fichero);
+			inputStreamReader =
+				new InputStreamReader(ficheroInputStream, Charset.forName("UTF-8"));
+			System.out.println("codigo: " + inputStreamReader.getEncoding());
 			String texto = "";
-			if(archivo.ready()) {
-				lector = new BufferedReader(archivo);
-				
-				String linea = "";
-				String str = "";
-				while (linea != null) {
-					linea = lector.readLine();
-					if(linea == null)
-						break;
-					if(linea.length()>0)
-						str+= linea + "\n";
+			int dato = inputStreamReader.read();
+			if(inputStreamReader.ready()) {
+				while(dato != -1) {
+					char caracterActual = (char) dato;
+					dato = inputStreamReader.read();
+					texto+= "" + caracterActual;
 				}
-				if(str.length() > 0)
-					str = str.substring(0, str.length()-1);
-				texto +=str + "\n";
-				lector.close();
 				//txtCodigo.getByIndex(getSelectedTab()).dato.setText(str);
 			}
 			else
-				System.out.print("El archivo no está listo para su lectura.");
-			archivo.close();
+				System.out.print("El archivo no estÃ¡ listo para su lectura.");
+			inputStreamReader.close();
 			final int tabs = getSelectedTab();
-			nuevaPestaña(texto, fichero.getPath(), fichero.getName(), texto.length());
+			nuevaPestaÃ±a(texto, fichero.getPath(), fichero.getName(), texto.length());
 			tituloVentana.getByIndex(tabs).dato = getTitle();
 			
 			codigoTabs.setToolTipTextAt(tabs+1, ruta);
-			añadirArchivoARecientes(fichero.getName(), ruta);
+			aÃ±adirArchivoARecientes(fichero.getName(), ruta);
 		} catch(FileNotFoundException e) {
-			String mensaje = "No se ha encontrado el archivo que se trató de abrir.";
+			String mensaje = "No se ha encontrado el archivo que se tratÃ³ de abrir.";
 			if(eliminarDeRecientes(ruta))
 				mensaje+="\nSe ha eliminado de la lista de archivos recientes.";
         	JOptionPane.showMessageDialog(null, mensaje, "Archivo no encontrado", JOptionPane.INFORMATION_MESSAGE);
@@ -674,8 +686,8 @@ public class Vista extends JFrame implements Serializable {
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos de cracks (*.txt, *.java, *.crack)", "txt", "java", "crack");
         
         JFileChooser explorador = new JFileChooser();              //Muestra una ventana que permite navegar por los directorios
-        explorador.setDialogTitle("Abrir");                        //Agrega título al cuadro de diálogo
-        explorador.setFileFilter(filtro);                          //Se agrega el filtro de tipo de archivo al cuadro de diálogo
+        explorador.setDialogTitle("Abrir");                        //Agrega tÃ­tulo al cuadro de diÃ¡logo
+        explorador.setFileFilter(filtro);                          //Se agrega el filtro de tipo de archivo al cuadro de diÃ¡logo
  
         if (explorador.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         	cargarArchivo(explorador.getSelectedFile().getAbsolutePath());
@@ -688,8 +700,8 @@ public class Vista extends JFrame implements Serializable {
 			PrintWriter escritor = new PrintWriter(archivo);
 			
 			final int tabs = getSelectedTab();
-			JTextPane codigoEnPestaña = txtCodigo.getByIndex(tabs).dato;
-			String str = codigoEnPestaña.getText();
+			JTextPane codigoEnPestaÃ±a = txtCodigo.getByIndex(tabs).dato;
+			String str = codigoEnPestaÃ±a.getText();
 			escritor.print(str); 
 			archivo.close();
 			escritor.close();
@@ -699,7 +711,7 @@ public class Vista extends JFrame implements Serializable {
 				toolTipText = ruta;
 			titulo.getByIndex(tabs).dato.setTitle(nombreDeArchivo, toolTipText);
 			
-			añadirArchivoARecientes(nombreDeArchivo, toolTipText);
+			aÃ±adirArchivoARecientes(nombreDeArchivo, toolTipText);
 			codigoTabs.setToolTipTextAt(tabs, ruta);
         }catch (Exception e) {
         	e.printStackTrace();
@@ -710,8 +722,8 @@ public class Vista extends JFrame implements Serializable {
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos de cracks (*.txt, *.java, *.crack)", "txt", "java", "crack");
 		JFileChooser explorador = new JFileChooser();              //Muestra una ventana que permite navegar por los directorios
         explorador.setApproveButtonText("Guardar");
-		explorador.setDialogTitle("Guardar como");                 //Agrega título al cuadro de diálogo
-        explorador.setFileFilter(filtro);                          //Se agrega el filtro de tipo de archivo al cuadro de diálogo
+		explorador.setDialogTitle("Guardar como");                 //Agrega tÃ­tulo al cuadro de diÃ¡logo
+        explorador.setFileFilter(filtro);                          //Se agrega el filtro de tipo de archivo al cuadro de diÃ¡logo
  
         try {
 	        if (explorador.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -722,9 +734,9 @@ public class Vista extends JFrame implements Serializable {
 				nombreDelArchivo.getByIndex(tabs).dato = fichero.getName();
 				guardarArchivo(fichero.getPath());
 				setTitle(nombreDelArchivo.getByIndex(tabs).dato + " - " + rutaDeArchivoActual.getByIndex(tabs).dato + " - CRACK'S Code");
-				añadirArchivoARecientes(fichero.getName(), fichero.getAbsolutePath());
+				aÃ±adirArchivoARecientes(fichero.getName(), fichero.getAbsolutePath());
 
-				JOptionPane.showMessageDialog(null, "El archivo ha sido guardado con éxito.", "", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "El archivo ha sido guardado con Ã©xito.", "", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}catch (Exception e) {
         	e.printStackTrace();
