@@ -20,7 +20,7 @@ public class AnalizadorSintactico {
 			Token token = tokens.get(i);
 			if(token.getTipo() != Statics.llaveInt && token.getTipo() != Statics.parentesisInt
 				&& token.getTipo() != Statics.enteroInt && token.getTipo() != Statics.operadorAritmeticoInt
-				&& token.getTipo() != Statics.identificadorInt
+				&& token.getTipo() != Statics.identificadorInt && token.getTipo() != Statics.dobleInt
 				&& !token.getValor().equals(";")) {
 //				System.out.println("token "+token.getValor()+" saltado");
 				continue;
@@ -60,11 +60,10 @@ public class AnalizadorSintactico {
 					analisisCorrecto = false;
 				}
 			}
-			else if(token.getTipo() == Statics.enteroInt || token.getTipo() == Statics.identificadorInt) {
-				if(token.getTipo() == Statics.identificadorInt) {
-					if(tokens.get(i - 1).getTipo() != Statics.operadorAritmeticoInt && tokens.get(i + 1).getTipo() != Statics.operadorAritmeticoInt) {
+			else if(token.getTipo() == Statics.enteroInt || token.getTipo() == Statics.identificadorInt || token.getTipo() == Statics.dobleInt) {
+				if(listaDeOperadores.size() == 0) {
+					if(tokens.get(i + 1).getTipo() != Statics.operadorAritmeticoInt)
 						continue;
-					}
 				}
 				if(listaDeOperandos.size() > listaDeOperadores.size()) {
 					String texto = Statics.getHTML("<p>Error la linea "+token.getLinea()+": Expresión algebraica erronea, se esperaba un <strong>operador</strong> luego del operando <strong>" + listaDeOperandos.get(listaDeOperandos.size()-1).getValor() + "</strong>."
@@ -117,7 +116,8 @@ public class AnalizadorSintactico {
 					}
 				}
 				else {
-					String texto = Statics.getHTML("<p>Error la linea "+token.getLinea()+": La cantidad de <strong>operadores</strong> debe ser igual a la cantidad de <strong>operandos</strong> menos uno.",  Statics.consolaCss);
+					String texto = Statics.getHTML("<p>Error la linea "+token.getLinea()+": La cantidad de <strong>operadores</strong> debe ser igual a la cantidad de <strong>operandos</strong> menos uno."
+						+ "<br />&nbsp;&nbsp;&nbsp;&nbsp;Hay " + listaDeOperandos.size() + " operandos y " + listaDeOperadores.size() + " operadores.",  Statics.consolaCss);
 					listaDeImpresiones.add(texto); //Es un error y guardo el donde se produjo el error
 					analisisCorrecto = false;
 				}

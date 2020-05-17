@@ -1,11 +1,11 @@
 package interfaz;
 
 import java.io.Serializable;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,11 +19,14 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,6 +35,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -58,6 +62,7 @@ public class Vista extends JFrame implements Serializable {
 		salir,
 		compilarCodigo,
 		cambiarTema,
+		personalizarTema,
 		ayuda,
 		acercaDe;
 	public JSplitPane dividor;
@@ -85,7 +90,8 @@ public class Vista extends JFrame implements Serializable {
 	private final String carpetaDeAppData = System.getenv("APPDATA") + "/Cracks Code/",
 		archivoDeArchivosRecientes = carpetaDeAppData+"recientes.txt",
 		archivoUltimoTemaUsado = carpetaDeAppData+"ultimoTemaUsado.txt",
-		archivoUltimaSesion = carpetaDeAppData+"ultimaSesion.txt";
+		archivoUltimaSesion = carpetaDeAppData+"ultimaSesion.txt",
+		archivoUltimoTemaPersonalizado = carpetaDeAppData+"ultimoTemaPersonalizado.txt";
 	public ImageIcon iconoNuevoTab,
 		icoCode,
 		icoBug,
@@ -123,6 +129,7 @@ public class Vista extends JFrame implements Serializable {
 		codigoTabs.insertTab("", iconoNuevoTab, null, "Nueva pestaña", codigoTabs.getTabCount());
 		codigoTabs.setSelectedIndex(codigoTabs.getTabCount()-1);
 		cargarUltimoTemaUsado();
+		cargarUltimoTemaPersonalizado();
 		Theme.changeTheme(this);
 		creaFicheroTemporal();
 //		if(!reanudarSesionAnterior()) { // no funciona bien, ya luego lo repararé
@@ -220,7 +227,8 @@ public class Vista extends JFrame implements Serializable {
 				tituloVentana, // 3
 				tamañoTextoDelEditor, // 4
 				cambiosGuardados, //5
-				txtCodigo}; //6
+				txtCodigo, //6
+		};
 		try {
 			File archivoParaEliminar = new File(archivoUltimaSesion);
 			archivoParaEliminar.delete();
@@ -284,6 +292,8 @@ public class Vista extends JFrame implements Serializable {
 		compilarCodigo.setIcon(new ImageIcon(Statics.getImage("run2")));
 		cambiarTema = new JMenuItem(Statics.getHTML(l+"Cambiar de tema"+a+"(F11)", css));
 		cambiarTema.setIcon(new ImageIcon(Statics.getImage("theme2")));
+		personalizarTema = new JMenuItem(Statics.getHTML(l+"Personalizar tema"+a+"(F10)", css));
+		personalizarTema.setIcon(new ImageIcon(Statics.getImage("theme2")));
 		ayuda = new JMenuItem(Statics.getHTML(l+"Ayuda"+a+"(F1)", css));
 		ayuda.setIcon(new ImageIcon(Statics.getImage("info2")));
 		acercaDe = new JMenuItem(Statics.getHTML(l+"Acerca de"+a+"(F12)", css));
@@ -300,19 +310,113 @@ public class Vista extends JFrame implements Serializable {
 		menuArchivo.add(salir);
 		menuCompilar.add(compilarCodigo);
 		menuOpciones.add(cambiarTema);
+		menuOpciones.add(personalizarTema);
 		menuOpciones.add(ayuda);
 		menuOpciones.add(acercaDe);
 	}
 	
-	public void cambiarTema() {
-		if(tema == Theme.CLARO) {
-			tema = Theme.OSCURO;
-		} else { // si no es claro el que traías, traías el oscuro, cambias al claro
-			tema = Theme.CLARO;
-		}
-		Theme.changeTheme(this);
+	public void personalizarTema() {
+		JPanel panelPrincipal = new JPanel();
+		Color	colorBack = Theme.colorBack,
+				colorCaret = Theme.colorCaret,
+				colorSelection = Theme.colorSelection,
+				colorForeground = Theme.colorForeground,
+				colorNegrita = Theme.colorNegrita,
+				colorString = Theme.colorString,
+				colorLineNumberBack = Theme.colorLineNumberBack,
+				colorLineNumber = Theme.colorLineNumber;
+		Color [] color = new Color[] {colorBack, colorCaret, colorSelection, colorForeground, colorNegrita, colorString, colorLineNumberBack, colorLineNumber};
+		int width = 0;
+		JButton btnBack = new JButton("Fondo del código") ,
+				btnCaret = new JButton("Signo de intercalación (cursor)"),
+				btnSelection = new JButton("Selección de texto"),
+				btnForeground = new JButton("Texto común"),
+				btnNegrita = new JButton("Palabras reservadas"),
+				btnString = new JButton("Cadenas detectadas"),
+				btnLineNumberBack = new JButton("Fondo del mostrador de líneas"),
+				btnLineNumber = new JButton("Números del mostrador de lineas"),
+				btnDefault = new JButton("Reestablecer colores");
+		JButton [] boton = new JButton[] {btnBack, btnCaret, btnSelection, btnForeground, btnNegrita, btnString, btnLineNumberBack, btnLineNumber, btnDefault};
 		
+		for(int i = 0 ; i < boton.length ; i++) {
+			if(width < boton[i].getWidth())
+				width = boton[i].getWidth();
+			int indice = i;
+			boton[i].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					if(indice < boton.length - 1) {
+						Color pickedColor = JColorChooser.showDialog(null, "Seleccione un color", color[indice]);
+						if(pickedColor != null) {
+							color[indice] = pickedColor;
+							boton[indice].setBackground(color[indice]);
+							boton[indice].setForeground(invertirColor(color[indice]));
+						}
+					}
+					else {
+						color[0] = Theme.defaultBack;
+						color[1] = Theme.defaultCaret;
+						color[2] = Theme.defaultSelection;
+						color[3] = Theme.defaultForeground;
+						color[4] = Theme.defaultNegrita;
+						color[5] = Theme.defaultString;
+						color[6] = Theme.defaultLineNumberBack;
+						color[7] = Theme.defaultLineNumber;
+						for(int i = 0 ; i < boton.length - 1; i++) {
+							boton[i].setBackground(color[i]);
+							boton[i].setForeground(invertirColor(color[i]));
+						}
+					}
+				}
+			});
+		}
+		
+		panelPrincipal.setPreferredSize(new Dimension(width + 50, 285));
+		
+		for(int i = 0 ; i < boton.length - 1; i++) {
+			boton[i].setBackground(color[i]);
+			boton[i].setForeground(invertirColor(color[i]));
+			panelPrincipal.add(boton[i]);
+		}
+		panelPrincipal.add(boton[boton.length - 1]);
+		int opcion = JOptionPane.showConfirmDialog(null, panelPrincipal, "Personalizar tema", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
+		if(opcion == JOptionPane.OK_OPTION)
+			cambiarTema(color[0], color[1], color[2], color[3], color[4], color[5], color[6], color[7]);
+	}
+	
+	private Color invertirColor(Color color) {
+		int colores = color.getRed() > 150 ? 0 : color.getGreen() > 150 ? 0 : color.getBlue() > 200 ? 0 : 255;
+		return new Color(colores, colores, colores);
+	}
+	
+	private void cambiarTema(Color colorBack, Color colorCaret, Color colorSelection, Color colorForeground, Color colorNegrita,
+			Color colorString, Color colorLineNumberBack, Color colorLineNumber) {
+		Theme.colorBack = colorBack;
+		Theme.colorCaret = colorCaret;
+		Theme.colorSelection = colorSelection;
+		Theme.colorForeground = colorForeground;
+		Theme.colorNegrita = colorNegrita;
+		Theme.colorString = colorString;
+		Theme.colorLineNumberBack = colorLineNumberBack;
+		Theme.colorLineNumber = colorLineNumber;
+		tema = Theme.PERSONALIZADO;
+		cambiarTema(tema);
+		
+		guardarUltimoTemaPersonalizado();
+	}
+	
+	public void cambiarTema(int tema) {
+		if(tema > Theme.PERSONALIZADO || tema < Theme.CLARO)
+			return;
+		Theme.changeTheme(this);
 		guardarUltimoTemaUsado();
+	}
+	
+	public void cambiarTema() {
+		if(tema == Theme.PERSONALIZADO)
+			tema = Theme.CLARO;
+		else
+			tema++;
+		cambiarTema(tema);
 	}
 	
 	private void cargarUltimoTemaUsado() {
@@ -333,6 +437,60 @@ public class Vista extends JFrame implements Serializable {
 		}
 		
 		tema = temaACargar;
+	}
+	
+	private void guardarUltimoTemaPersonalizado() {
+		ArrayList<Color> listaDeColores = new ArrayList<Color>(); // si lo siguiente falla, este crack estará vacío
+		try {
+	    	// verificar si la carpeta existe
+        	if(!Files.exists(Paths.get(carpetaDeAppData))) {
+        		Files.createDirectory(Paths.get(carpetaDeAppData)); // si no existe, se crea
+        	}
+        	File fichero = new File(archivoUltimoTemaPersonalizado);
+	    	FileOutputStream fos = new FileOutputStream(fichero.getAbsoluteFile());
+	    	ObjectOutputStream oos = new ObjectOutputStream(fos);
+			listaDeColores.add(Theme.colorBack);
+			listaDeColores.add(Theme.colorCaret);
+			listaDeColores.add(Theme.colorSelection);
+			listaDeColores.add(Theme.colorForeground);
+			listaDeColores.add(Theme.colorNegrita);
+			listaDeColores.add(Theme.colorString);
+			listaDeColores.add(Theme.colorLineNumberBack);
+			listaDeColores.add(Theme.colorLineNumber);
+			oos.writeObject(listaDeColores);
+			oos.close();
+			fos.close();
+		} catch (IOException e) {
+			System.out.println("Hubo un problema al guardar la última modificación del tema personalizado.");
+			e.printStackTrace();
+		}
+	}
+	
+	private boolean cargarUltimoTemaPersonalizado() {
+		ArrayList<Color> listaDeColores = new ArrayList<Color>(); // si lo siguiente falla, este crack estará vacío
+		try {
+			// verificar si la carpeta existe
+			if(!Files.exists(Paths.get(carpetaDeAppData))) {
+				Files.createDirectory(Paths.get(carpetaDeAppData)); // si no existe, se crea
+			}
+			File fichero = new File(archivoUltimoTemaPersonalizado);
+			if(!Files.exists(Paths.get(archivoUltimoTemaPersonalizado)))
+				return false;
+			FileInputStream fis = new FileInputStream(fichero.getAbsoluteFile());
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			listaDeColores = (ArrayList<Color>) ois.readObject();
+			ois.close();
+			fis.close();
+		} catch (IOException e) {
+			System.out.println("Hubo un problema al cargar la última modificación del tema personalizado.");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Hubo un problema al cargar la última modificación del tema personalizado.");
+			e.printStackTrace();
+		}
+		System.out.println(Files.exists(Paths.get(archivoUltimoTemaPersonalizado)));
+		cambiarTema(listaDeColores.get(0), listaDeColores.get(1), listaDeColores.get(2), listaDeColores.get(3), listaDeColores.get(4), listaDeColores.get(5), listaDeColores.get(6), listaDeColores.get(7));
+		return true;
 	}
 	
 	private void guardarUltimoTemaUsado() {
@@ -483,6 +641,7 @@ public class Vista extends JFrame implements Serializable {
 					compilarCodigo.setFocusable(false);
 				menuOpciones.setFocusable(false);
 					cambiarTema.setFocusable(false);
+					personalizarTema.setFocusable(false);
 					acercaDe.setFocusable(false);
 		
 		// escuchadores
@@ -503,6 +662,7 @@ public class Vista extends JFrame implements Serializable {
 					compilarCodigo.addActionListener(escuchadores);
 				// Opciones
 					cambiarTema.addActionListener(escuchadores);
+					personalizarTema.addActionListener(escuchadores);
 					ayuda.addActionListener(escuchadores);
 					acercaDe.addActionListener(escuchadores);
 				

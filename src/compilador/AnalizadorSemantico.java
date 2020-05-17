@@ -335,20 +335,27 @@ public class AnalizadorSemantico {
 				if(nodo.getContenido().getTipo() == Statics.operadorAritmeticoInt)
 					return null;
 				else {
-					int tipoDeResultado = nodo.getContenido().getTipo();
+					int tipoDeResultado;
+					double valor;
 					if(nodo.getContenido().getTipo() == Statics.identificadorInt) {
-						if(identificadoresReales.containsKey(nodo.getContenido().getValor()))
+						if(identificadoresReales.containsKey(nodo.getContenido().getValor())) {
 							tipoDeResultado = identificadoresReales.get(nodo.getContenido().getValor()).getTipo();
+							tipoDeResultado = Statics.deTipoDeDatoATipoDeToken(tipoDeResultado);
+						}
 						else {
 							String texto = "<p>Error en la linea "+nodo.getContenido().getLinea()+": la variable <strong>"+nodo.getContenido().getValor()+"</strong> no ha sido definida anteriormente";
 							listaDeImpresiones.add(Statics.getHTML(texto, Statics.consolaCss));
 							analisisCorrecto = false;
 							return null;
 						}
+						valor = Double.parseDouble(identificadoresReales.get(nodo.getContenido().getValor()).getValor());
 					}
-					array[0] = Double.parseDouble(nodo.getContenido().getValor());
+					else {
+						valor = Double.parseDouble(nodo.getContenido().getValor());
+						tipoDeResultado = nodo.getContenido().getTipo();
+					}
+					array[0] = valor;
 					array[1] = tipoDeResultado;
-					System.out.println("tipo " + Statics.tipoDeToken[(int)array[1]]);
 					array[3] = "";
 					array[5] = 0;
 					for (int i = 0; i < 65; i++) {
@@ -388,21 +395,33 @@ public class AnalizadorSemantico {
 			else {
 				if(nodo.getLlave() % 2 == 0) { // par, operando
 					Object operando1 = array[0],
+						operando2;
+					if(nodo.getContenido().getTipo() == Statics.identificadorInt) {
+						if(!identificadoresReales.containsKey(nodo.getContenido().getValor())) {
+							String texto = "<p>Error en la linea "+nodo.getContenido().getLinea()+": la variable <strong>"+nodo.getContenido().getValor()+"</strong> no ha sido definida anteriormente";
+							listaDeImpresiones.add(Statics.getHTML(texto, Statics.consolaCss));
+							analisisCorrecto = false;
+							return null;
+						}
+						operando2 = Double.parseDouble(identificadoresReales.get(nodo.getContenido().getValor()).getValor());
+					}
+					else {
 						operando2 = Double.parseDouble(nodo.getContenido().getValor());
+					}
 					if(nodo.getContenido().getTipo() == Statics.dobleInt)
 						array[1] = Statics.dobleInt;
 					switch((String)array[2]) {
 					case "+":
-						array[0] = (double)array[0] + Double.parseDouble(nodo.getContenido().getValor());
+						array[0] = (double)array[0] + (double)operando2;
 						break;
 					case "-":
-						array[0] = (double)array[0] - Double.parseDouble(nodo.getContenido().getValor());
+						array[0] = (double)array[0] - (double)operando2;
 						break;
 					case "/":
-						array[0] = (double)array[0] / Double.parseDouble(nodo.getContenido().getValor());
+						array[0] = (double)array[0] / (double)operando2;
 						break;
 					case "*":
-						array[0] = (double)array[0] * Double.parseDouble(nodo.getContenido().getValor());
+						array[0] = (double)array[0] * (double)operando2;
 						break;
 					default:
 						System.out.println("operador inválido, sólo se admiten +, -, / y *");
@@ -520,7 +539,6 @@ public class AnalizadorSemantico {
 						String texto = "<p>Error en la linea " + tokens.get(i).getLinea() + ": El identificador <strong>" + nombre + "</strong>, del tipo <i>" + Statics.tipoDeDato[tipo] + "</i> es incompatible"
 							+ "<br />&nbsp;&nbsp;&nbsp;&nbsp;con el tipo de valor <i>" + Statics.tipoDeDato[Statics.getTipoDeConstante(valor)] + "</i> que se le está asignando";
 						listaDeImpresiones.add(Statics.getHTML(texto, Statics.consolaCss));
-						System.out.println("Error semántico: identificador "+nombre+" previamente agregado en la linea "+tokens.get(i).getLinea());
 					}
 				}
 			}
@@ -533,7 +551,6 @@ public class AnalizadorSemantico {
 					String texto = "<p>Error en la linea " + tokens.get(i).getLinea() + ": El identificador <strong>" + nombre + "</strong>, del tipo " + Statics.tipoDeDato[tipo] + ", ya existe"
 						+ "<br />&nbsp;&nbsp;&nbsp;&nbsp;en la linea " + identificadoresReales.get(nombre).getPosicion() + " con el tipo de identificador <i>" + Statics.tipoDeDato[identificadoresReales.get(nombre).getTipo()];
 					listaDeImpresiones.add(Statics.getHTML(texto, Statics.consolaCss));
-					System.out.println("Error semántico: identificador "+nombre+" previamente agregado en la linea "+identificadoresReales.get(nombre).getPosicion());
 				}
 			}
 		}

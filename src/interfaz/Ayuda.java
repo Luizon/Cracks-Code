@@ -87,6 +87,8 @@ public class Ayuda extends JFrame implements FocusListener, KeyListener {
 				+ "		Mostrar pestaña consola<br />"
 				+ "		<strong>F3: </strong>"								
 				+ "		Mostrar pestaña datos<br />"
+				+ "		<strong>F10: </strong>"
+				+ "		Personalizar tema<br />"
 				+ "		<strong>F11: </strong>"
 				+ "		Cambiar de tema<br />"
 				+ "		<strong>F12: </strong>"

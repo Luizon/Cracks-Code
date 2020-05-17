@@ -73,9 +73,6 @@ public class Statics {
 			+ "em {" // para el contenido de las celdas
 			+ "	color: #008800;"
 			+ "	font-weight: bold;"
-			+ "}"
-			+ "var {" // para el título principal
-			+ "	color: #008800;"
 			+ "}";
 	
 	///////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +146,40 @@ public class Statics {
 				texto = relleno + texto;
 		}
 		return texto;
+	}
+	
+	static public int deTipoDeDatoATipoDeToken(int tipoDeDato) {
+		switch(tipoDeDato) {
+		case 0:
+			return Statics.enteroInt;
+		case 1:
+			return Statics.cadenaInt;
+		case 2:
+			return Statics.booleanoInt;
+		case 3:
+			return Statics.dobleInt;
+		case 4:
+			return Statics.claseInt;
+		}
+		return -1;
+	}
+	
+	static public int getPEMDAS(String operador) { // 
+		switch(operador) {
+		/*
+		case "(": // Parentesis
+			return 0;
+		case "^": // Exponente
+			return 1;
+		*/
+		case "*": // Multiplicación
+		case "/": // División
+			return 2;
+		case "+": // Adición
+		case "-": // Sustracción
+			return 3;
+		}
+		return -1;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////

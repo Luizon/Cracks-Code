@@ -4,10 +4,9 @@
 - El compilador no acepta modificadores, no intente añadir public o private
 - El tipo <i>string</i> no acepta espacios entre las comillas, en su lugar puede usar <b>-</b> y <b>_</b>
 - El compilador acepta comentarios normales, ponga <b>//</b> y todo lo que le siga a eso en una linea será ignorado por el compilador
-- El compilador no acepta expresiones aritméticas ni expresiones lógicas, no supe hacerlo y no me di el tiempo suficiente para aprender xd
+- El compilador no acepta expresiones lógicas
 - Dado el punto anterior, el compilador no acepta if ni while, chanclas xd
 - Tampoco acepta métodos ni funciones, pero no vi que fueran obligatorios, sólo vi que quería que se manejara el alcance y para eso bastan las clases y los bloques de código sin clase
-- El modo oscuro del compilador puede no funcionar perfectamente siempre, se recomienda el claro si le da un problema, personalmente prefiero el oscuro de todos modos
 
 ### Los colores en la tabla de símbolo de hecho son una ayuda para saber el alcance en el que están declaradas las variables y clases.
 ![Imagen del camino feliz](/img/caminoFeliz.png)
@@ -16,16 +15,11 @@
 ![Imagen los acortadores](/img/ventanaAyuda.png)
 
 
----------------------------------------
-disculpe usted los comentarios informales profe, no esperaba que lo pidiera por GitHub cuando había hecho el repositorio hace meses jaja
-
-
 -----------------------------------
 ## Lista de weas por hacer
 ### IMPORTANTES
 - hacer más compleja la forma en que se detectan strings, en el compilador semántico.
 ### Secundaros
-- añadir notas del compilador
 - añadir tabulador automático o como se llame
 - añadir teclas ctrl+z y ctrl+y
 - añadir un buscador

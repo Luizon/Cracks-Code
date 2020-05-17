@@ -4,14 +4,35 @@ import java.awt.Color;
 
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 public class Theme {
-	public final static int CLARO = 0, OSCURO = 1;
-	static private final Color ALMOST_WHITE = new Color(215, 215, 215);
-	static private final Color AZUL_CLARO = new Color(184, 207, 229);
+	public final static int
+		CLARO = 0,
+		OSCURO = 1,
+		PERSONALIZADO = 2;
+	static private final Color
+		ALMOST_WHITE = new Color(215, 215, 215),
+		AZUL_CLARO = new Color(184, 207, 229);
+	static Color 
+		colorBack = Color.DARK_GRAY,
+		colorCaret = ALMOST_WHITE,
+		colorSelection = Color.DARK_GRAY,
+		colorForeground = Color.WHITE,
+		colorNegrita = new Color(0, 200, 200),
+		colorString = new Color(102, 255, 102),
+		colorLineNumberBack = new Color(127, 127, 230),
+		colorLineNumber = new Color(0, 127, 0),
+		defaultBack = colorBack,
+		defaultCaret = colorCaret,
+		defaultSelection = colorSelection,
+		defaultForeground = colorForeground,
+		defaultNegrita = colorNegrita,
+		defaultString = colorString,
+		defaultLineNumberBack = colorLineNumberBack,
+		defaultLineNumber = colorLineNumber;
+
 	public static void changeTheme(Vista v) {
 		for (int i=0; i<v.codigoTabs.getTabCount()-1; i++) {
 			changeTheme((CodePane)v.codigoTabs.getComponentAt(i), v.tema);
@@ -23,49 +44,68 @@ public class Theme {
 			colorCaret,
 			colorSelection,
 			colorForeground,
-			colorLineNumberBack;
+			colorLineNumberBack,
+			colorNegrita,
+			colorString,
+			colorLineNumber;
 		switch(tema) {
 			case CLARO:
 				colorBack = Color.WHITE;
 				colorCaret = Color.BLACK;
 				colorSelection = AZUL_CLARO;
 				colorForeground = Color.BLACK;
+				colorNegrita = new Color(100, 10, 140);
+				colorString = new Color(200, 0, 0);
 				colorLineNumberBack = new Color(230, 230, 230);
+				colorLineNumber = Color.BLACK;
 				break;
-			default:
+			case OSCURO:
 				colorBack = Color.BLACK;
 				colorCaret = Color.WHITE;
 				colorSelection = Color.GRAY;
 				colorForeground = ALMOST_WHITE;
+				colorNegrita = new Color(150, 17, 255);
+				colorString = new Color(230, 0, 0);
 				colorLineNumberBack = new Color(120, 120, 120);
+				colorLineNumber = Color.BLACK;
+				break;
+			default:
+				colorBack = Theme.colorBack;
+				colorCaret = Theme.colorCaret;
+				colorSelection = Theme.colorSelection;
+				colorForeground = Theme.colorForeground;
+				colorNegrita = Theme.colorNegrita;
+				colorString = Theme.colorString;
+				colorLineNumberBack = Theme.colorLineNumberBack;
+				colorLineNumber = Theme.colorLineNumber;
 				break;
 		}
 		JTextPane codePane = panel.codePane,
 			lineNumber = panel.lineNumber;
+		String texto = codePane.getText();
+		int caretPosition = codePane.getCaretPosition(),
+			selectionStart = codePane.getSelectionStart(),
+			selectionEnd = codePane.getSelectionEnd();
+		codePane.getDocument().removeDocumentListener(panel);
+		CodeDocument newDocument = new CodeDocument(codePane, colorForeground, colorNegrita, colorString);
+		codePane.setStyledDocument(newDocument);
+		codePane.setText(texto);
+		codePane.setCaretPosition(caretPosition);
+		codePane.setSelectionStart(selectionStart);
+		codePane.setSelectionEnd(selectionEnd);
+		newDocument.addDocumentListener(panel);
+		
 		codePane.setBackground(colorBack);
 		codePane.setCaretColor(colorCaret);
 		codePane.setSelectionColor(colorSelection);
 		codePane.setSelectedTextColor(Color.BLACK);
+
 		lineNumber.setBackground(colorLineNumberBack);
-
-		StyledDocument doc = codePane.getStyledDocument();
-        Style style = codePane.addStyle("stylename", null);
-        StyleConstants.setForeground(style, colorForeground);
-        String aux = codePane.getText();
-        codePane.setText("");
-        try {
-        	doc.insertString(0, aux.length() > 0 ? aux : " ", style);
-        	if(aux.length()==0)
-        		codePane.setText("");
-        }
-        catch (BadLocationException e) {
-        	System.out.println("falló el cambio de tema");
-        }
-        
-//        StyleContext sc = StyleContext.getDefaultStyleContext();
-//        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.WHITE);
-//        panel.setCharacterAttributes(aset, false);
-
-//		panel.update(panel.getGraphics());
+		SimpleAttributeSet derecha = new SimpleAttributeSet();
+		StyleConstants.setAlignment(derecha, StyleConstants.ALIGN_RIGHT);
+		Numeros lineNumberDocument = new Numeros(lineNumber, colorLineNumber);
+		lineNumberDocument.setParagraphAttributes(0, lineNumberDocument.getLength(), derecha, false);
+		lineNumber.setStyledDocument(lineNumberDocument);
+		lineNumber.setText(lineNumber.getText());
 	}
 }

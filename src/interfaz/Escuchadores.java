@@ -101,6 +101,9 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				teclaControl = false;
 				teclaShift = false;
 				break;
+			case KeyEvent.VK_F10:
+				vista.personalizarTema.doClick();
+				break;
 			case KeyEvent.VK_F11:
 				vista.cambiarTema.doClick();
 				break;
@@ -263,6 +266,10 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			
 			vista.hayError = !analisisCorrecto;
 			modificaTitulos();
+			return;
+		}
+		if(evt.getSource() == vista.personalizarTema) {
+			vista.personalizarTema();
 			return;
 		}
 		if(evt.getSource() == vista.cambiarTema) {
