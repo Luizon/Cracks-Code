@@ -2,7 +2,7 @@
 --------------------------------
 # NOTAS
 - El compilador no acepta modificadores, no intente añadir public o private
-- El tipo <i>string</i> no acepta espacios entre las comillas, en su lugar puede usar <b>-</b> y <b>_</b>
+- El tipo <i>string</i> no acepta espacios entre las comillas, en su lugar puede usar <b>_</b>
 - El compilador acepta comentarios normales, ponga <b>//</b> y todo lo que le siga a eso en una linea será ignorado por el compilador
 - El compilador no acepta expresiones lógicas
 - Dado el punto anterior, el compilador no acepta if ni while, chanclas xd
