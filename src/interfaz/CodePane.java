@@ -31,11 +31,8 @@ public class CodePane extends JScrollPane implements DocumentListener {
 		lineNumber.setText("1");
 		lineNumber.setEditable(false);
 		lineNumber.setFocusable(false);
-//		StyledDocument lineNumberDoc = lineNumber.getStyledDocument();
 		SimpleAttributeSet derecha = new SimpleAttributeSet();
 		StyleConstants.setAlignment(derecha, StyleConstants.ALIGN_RIGHT);
-//		lineNumberDoc.setParagraphAttributes(0, lineNumberDoc.getLength(), derecha, false);
-//		lineNumber.addStyle("numeros", null);
 		Numeros lineNumberDocument = new Numeros(lineNumber, Theme.colorLineNumber);
 		lineNumberDocument.setParagraphAttributes(0, lineNumberDocument.getLength(), derecha, false);
 		lineNumber.setStyledDocument(lineNumberDocument);

@@ -29,11 +29,12 @@ public class AnalizadorLexico {
 				while(tokenizer.hasMoreTokens()) {
 					vacio = false;
 					token = tokenizer.nextToken();
-					boolean bandera = analizarToken(token, linea, id++, listaDeImpresiones, listaDeTokens);//Y lo mando a analizar
+					boolean bandera = analizarToken(token, linea, id, listaDeImpresiones, listaDeTokens);//Y lo mando a analizar
 					if(analisisCorrecto)
 						analisisCorrecto = bandera; // si analisisCorrecto ya salió false una sola vez, ya no puede cambiarse
 					if(token.equals("//"))
 						break;
+					id++;
 				}
 				lineaDeTexto=archivoEntrada.readLine();
 				linea++;//Cuento el renglon

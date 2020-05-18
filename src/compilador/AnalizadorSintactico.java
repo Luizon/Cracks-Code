@@ -18,6 +18,7 @@ public class AnalizadorSintactico {
 		boolean analisisCorrecto = true;
 		ArrayList<ArbolBinario<Token>> arboles = new ArrayList<ArbolBinario<Token>>();
 		for(int i=0; i<tokens.size(); i++) {
+			System.out.println(tokens.get(i));
 			Token token = tokens.get(i);
 			if(token.getTipo() != Statics.llaveInt && token.getTipo() != Statics.parentesisInt
 				&& token.getTipo() != Statics.enteroInt && token.getTipo() != Statics.operadorAritmeticoInt
@@ -108,7 +109,7 @@ public class AnalizadorSintactico {
 							arbol.insertar(z*2 + 2, listaDeOperandos.get(z + 1));
 						}
 						arbol.setValor("arbolonski");
-						ordenaArbolDeExpresionAlgebraica(arbol);
+						// ordenaArbolDeExpresionAlgebraica(arbol);
 						tokens.set(listaDeOperandos.get(0).getId(), arbol);
 //						System.out.println(arbol.getValor());
 					}
@@ -246,7 +247,7 @@ public class AnalizadorSintactico {
 			}
 			*/
 		auxiliar.setRaiz(raiz);
-		auxiliar.recorridoInfijo();
+//		auxiliar.recorridoInfijo();
 		arbol = auxiliar;
 	};
 }

@@ -1,0 +1,16 @@
+// expresiones simples
+int entero1 = 50 / 10;
+
+// usando variables ya existentes
+int entero2 = entero1 + 10;
+
+// mezclando tipos
+double doble1 = entero1 / 0.5;
+
+// tirando error si se usan mal los tipos
+//double doble2 = entero1 * entero2; // al haber solo int en la expresión, el resultado es int
+double doble2 = entero1 * entero2 / 2.1; // al haber un double, ya no hay problema
+
+// expresiones largas
+int entero3 = 50 * 4 / 2 + 10 - 15;
+

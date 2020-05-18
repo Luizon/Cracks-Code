@@ -690,6 +690,7 @@ public class Vista extends JFrame implements Serializable {
 	
 	public void nuevaPestaña(String texto, String ruta, String nombre, int tamaño) {
 		int tabs = codigoTabs.getTabCount();
+		CodePane codePane;
 		if(tamaño >= 0) { // significa que es una adición normal
 			if(texto.length() == 0) {
 				texto = "Puro crack aquí.";
@@ -702,9 +703,11 @@ public class Vista extends JFrame implements Serializable {
 			            <= getParent().getSize().width;
 			    }
 			};
+			cajaDeTexto.setFont(fuenteConsola);
+			codePane = new CodePane(cajaDeTexto);
+			Theme.changeTheme(codePane, tema);
 			cajaDeTexto.setText(texto);
 			txtCodigo.insertar(cajaDeTexto);
-			cajaDeTexto.setFont(fuenteConsola);
 			cajaDeTexto.addKeyListener(escuchadores);
 			cajaDeTexto.addAncestorListener(escuchadores);
 			rutaDeArchivoActual.insertar(ruta);
@@ -716,9 +719,10 @@ public class Vista extends JFrame implements Serializable {
 			tamañoTextoDelEditor.insertar(tamaño);
 			cambiosGuardados.insertar(true);
 		} // de ser tamaño un negativo es porque se quiere la pura pestaña y los datos anteriores ya se tienen
-		
-		CodePane codePane = new CodePane(txtCodigo.getByIndex(tabs-1).dato);
-		Theme.changeTheme(codePane, tema);
+		else {
+			codePane = new CodePane(txtCodigo.getByIndex(tabs-1).dato);
+			Theme.changeTheme(codePane, tema);
+		}
 		
 		codigoTabs.insertTab("esto no debería salir nunca", null, codePane, "Archivo sin guardar", tabs);
 		if(tamaño >=0) {
@@ -803,7 +807,6 @@ public class Vista extends JFrame implements Serializable {
 			FileInputStream ficheroInputStream = new FileInputStream(fichero);
 			inputStreamReader =
 				new InputStreamReader(ficheroInputStream, Charset.forName("UTF-8"));
-			System.out.println("codigo: " + inputStreamReader.getEncoding());
 			String texto = "";
 			int dato = inputStreamReader.read();
 			if(inputStreamReader.ready()) {
