@@ -323,9 +323,10 @@ public class Vista extends JFrame implements Serializable {
 				colorForeground = Theme.colorForeground,
 				colorNegrita = Theme.colorNegrita,
 				colorString = Theme.colorString,
+				colorNumero = Theme.colorNumero,
+				colorComentario = Theme.colorComentario,
 				colorLineNumberBack = Theme.colorLineNumberBack,
 				colorLineNumber = Theme.colorLineNumber;
-		Color [] color = new Color[] {colorBack, colorCaret, colorSelection, colorForeground, colorNegrita, colorString, colorLineNumberBack, colorLineNumber};
 		int width = 0;
 		JButton btnBack = new JButton("Fondo del código") ,
 				btnCaret = new JButton("Signo de intercalación (cursor)"),
@@ -333,10 +334,13 @@ public class Vista extends JFrame implements Serializable {
 				btnForeground = new JButton("Texto común"),
 				btnNegrita = new JButton("Palabras reservadas"),
 				btnString = new JButton("Cadenas detectadas"),
+				btnNumero = new JButton("Números"),
+				btnComentario = new JButton("Comentarios"),
 				btnLineNumberBack = new JButton("Fondo del mostrador de líneas"),
 				btnLineNumber = new JButton("Números del mostrador de lineas"),
 				btnDefault = new JButton("Reestablecer colores");
-		JButton [] boton = new JButton[] {btnBack, btnCaret, btnSelection, btnForeground, btnNegrita, btnString, btnLineNumberBack, btnLineNumber, btnDefault};
+		Color [] color     = new Color[] {colorBack, colorCaret, colorSelection, colorForeground, colorNegrita, colorString, colorNumero, colorComentario, colorLineNumberBack, colorLineNumber};
+		JButton [] boton = new JButton[] {btnBack,   btnCaret,   btnSelection,   btnForeground,   btnNegrita,   btnString,   btnNumero,   btnComentario,   btnLineNumberBack,   btnLineNumber, btnDefault};
 		
 		for(int i = 0 ; i < boton.length ; i++) {
 			if(width < boton[i].getWidth())
@@ -359,8 +363,10 @@ public class Vista extends JFrame implements Serializable {
 						color[3] = Theme.defaultForeground;
 						color[4] = Theme.defaultNegrita;
 						color[5] = Theme.defaultString;
-						color[6] = Theme.defaultLineNumberBack;
-						color[7] = Theme.defaultLineNumber;
+						color[6] = Theme.defaultNumero;
+						color[7] = Theme.defaultComentario;
+						color[8] = Theme.defaultLineNumberBack;
+						color[9] = Theme.defaultLineNumber;
 						for(int i = 0 ; i < boton.length - 1; i++) {
 							boton[i].setBackground(color[i]);
 							boton[i].setForeground(invertirColor(color[i]));
@@ -370,7 +376,7 @@ public class Vista extends JFrame implements Serializable {
 			});
 		}
 		
-		panelPrincipal.setPreferredSize(new Dimension(width + 50, 285));
+		panelPrincipal.setPreferredSize(new Dimension(width + 50, 340));
 		
 		for(int i = 0 ; i < boton.length - 1; i++) {
 			boton[i].setBackground(color[i]);
@@ -380,7 +386,7 @@ public class Vista extends JFrame implements Serializable {
 		panelPrincipal.add(boton[boton.length - 1]);
 		int opcion = JOptionPane.showConfirmDialog(null, panelPrincipal, "Personalizar tema", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 		if(opcion == JOptionPane.OK_OPTION)
-			cambiarTema(color[0], color[1], color[2], color[3], color[4], color[5], color[6], color[7]);
+			cambiarTema(color[0], color[1], color[2], color[3], color[4], color[5], color[6], color[7], color[8], color[9]);
 	}
 	
 	private Color invertirColor(Color color) {
@@ -389,13 +395,15 @@ public class Vista extends JFrame implements Serializable {
 	}
 	
 	private void cambiarTema(Color colorBack, Color colorCaret, Color colorSelection, Color colorForeground, Color colorNegrita,
-			Color colorString, Color colorLineNumberBack, Color colorLineNumber) {
+			Color colorString, Color colorNumero, Color colorComentario, Color colorLineNumberBack, Color colorLineNumber) {
 		Theme.colorBack = colorBack;
 		Theme.colorCaret = colorCaret;
 		Theme.colorSelection = colorSelection;
 		Theme.colorForeground = colorForeground;
 		Theme.colorNegrita = colorNegrita;
 		Theme.colorString = colorString;
+		Theme.colorNumero = colorNumero;
+		Theme.colorComentario = colorComentario;
 		Theme.colorLineNumberBack = colorLineNumberBack;
 		Theme.colorLineNumber = colorLineNumber;
 		tema = Theme.PERSONALIZADO;
@@ -455,6 +463,8 @@ public class Vista extends JFrame implements Serializable {
 			listaDeColores.add(Theme.colorForeground);
 			listaDeColores.add(Theme.colorNegrita);
 			listaDeColores.add(Theme.colorString);
+			listaDeColores.add(Theme.colorNumero);
+			listaDeColores.add(Theme.colorComentario);
 			listaDeColores.add(Theme.colorLineNumberBack);
 			listaDeColores.add(Theme.colorLineNumber);
 			oos.writeObject(listaDeColores);
@@ -488,8 +498,9 @@ public class Vista extends JFrame implements Serializable {
 			System.out.println("Hubo un problema al cargar la última modificación del tema personalizado.");
 			e.printStackTrace();
 		}
-		System.out.println(Files.exists(Paths.get(archivoUltimoTemaPersonalizado)));
-		cambiarTema(listaDeColores.get(0), listaDeColores.get(1), listaDeColores.get(2), listaDeColores.get(3), listaDeColores.get(4), listaDeColores.get(5), listaDeColores.get(6), listaDeColores.get(7));
+		if(listaDeColores.size() != 10)
+			return false;
+		cambiarTema(listaDeColores.get(0), listaDeColores.get(1), listaDeColores.get(2), listaDeColores.get(3), listaDeColores.get(4), listaDeColores.get(5), listaDeColores.get(6), listaDeColores.get(7), listaDeColores.get(8), listaDeColores.get(9));
 		return true;
 	}
 	

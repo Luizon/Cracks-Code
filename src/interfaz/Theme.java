@@ -22,14 +22,18 @@ public class Theme {
 		colorForeground = Color.WHITE,
 		colorNegrita = new Color(0, 200, 200),
 		colorString = new Color(102, 255, 102),
+		colorNumero = new Color(255, 255, 0),
+		colorComentario = new Color(230, 0, 0),
 		colorLineNumberBack = new Color(127, 127, 230),
-		colorLineNumber = new Color(0, 127, 0),
+		colorLineNumber = new Color(50, 50, 50),
 		defaultBack = colorBack,
 		defaultCaret = colorCaret,
 		defaultSelection = colorSelection,
 		defaultForeground = colorForeground,
 		defaultNegrita = colorNegrita,
 		defaultString = colorString,
+		defaultNumero = colorNumero,
+		defaultComentario = colorComentario,
 		defaultLineNumberBack = colorLineNumberBack,
 		defaultLineNumber = colorLineNumber;
 
@@ -44,9 +48,11 @@ public class Theme {
 			colorCaret,
 			colorSelection,
 			colorForeground,
-			colorLineNumberBack,
 			colorNegrita,
 			colorString,
+			colorNumero,
+			colorComentario,
+			colorLineNumberBack,
 			colorLineNumber;
 		switch(tema) {
 			case CLARO:
@@ -56,6 +62,8 @@ public class Theme {
 				colorForeground = Color.BLACK;
 				colorNegrita = new Color(100, 10, 140);
 				colorString = new Color(200, 0, 0);
+				colorNumero = new Color(0, 50, 0);
+				colorComentario = new Color(127, 127, 127);
 				colorLineNumberBack = new Color(230, 230, 230);
 				colorLineNumber = Color.BLACK;
 				break;
@@ -66,6 +74,8 @@ public class Theme {
 				colorForeground = ALMOST_WHITE;
 				colorNegrita = new Color(150, 17, 255);
 				colorString = new Color(230, 0, 0);
+				colorNumero = new Color(0, 230, 0);
+				colorComentario = new Color(100, 100, 100);
 				colorLineNumberBack = new Color(120, 120, 120);
 				colorLineNumber = Color.BLACK;
 				break;
@@ -76,6 +86,8 @@ public class Theme {
 				colorForeground = Theme.colorForeground;
 				colorNegrita = Theme.colorNegrita;
 				colorString = Theme.colorString;
+				colorNumero = Theme.colorNumero;
+				colorComentario = Theme.colorComentario;
 				colorLineNumberBack = Theme.colorLineNumberBack;
 				colorLineNumber = Theme.colorLineNumber;
 				break;
@@ -87,7 +99,7 @@ public class Theme {
 			selectionStart = codePane.getSelectionStart(),
 			selectionEnd = codePane.getSelectionEnd();
 		codePane.getDocument().removeDocumentListener(panel);
-		CodeDocument newDocument = new CodeDocument(codePane, colorForeground, colorNegrita, colorString);
+		CodeDocument newDocument = new CodeDocument(codePane, colorForeground, colorNegrita, colorString, colorNumero, colorComentario);
 		codePane.setStyledDocument(newDocument);
 		codePane.setText(texto);
 		codePane.setCaretPosition(caretPosition);

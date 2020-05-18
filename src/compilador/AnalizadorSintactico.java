@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import estructuraDeDatos.ArbolBinario;
+import estructuraDeDatos.NodoArbolBinario;
 import misc.Statics;
 
 public class AnalizadorSintactico {
@@ -107,6 +108,7 @@ public class AnalizadorSintactico {
 							arbol.insertar(z*2 + 2, listaDeOperandos.get(z + 1));
 						}
 						arbol.setValor("arbolonski");
+						ordenaArbolDeExpresionAlgebraica(arbol);
 						tokens.set(listaDeOperandos.get(0).getId(), arbol);
 //						System.out.println(arbol.getValor());
 					}
@@ -154,4 +156,97 @@ public class AnalizadorSintactico {
 			listaDeImpresiones.add(Statics.getHTML("<var>Código sin errores sintácticos", Statics.consolaCss));
 		return analisisCorrecto;
 	}
+	
+	private static NodoArbolBinario<Token> creaSubArbol(ArbolBinario<Token> arbol, int inicio, int fin) {
+		ArbolBinario<Token> auxiliar = new ArbolBinario<Token>(arbol.getLinea(), arbol.getTipo(), arbol.getId());
+//		System.out.println("~");
+//		arbol.recorridoInfijo();
+//		System.out.println("~");
+		int contador = 0;
+		for(int i = inicio; i < arbol.cuentaNodos(); i++) {
+			NodoArbolBinario<Token> nodo = arbol.getByIndex(i);
+			auxiliar.insertar(contador++, nodo.getContenido());
+//			System.out.println(contador + ", " + nodo);
+		}
+		NodoArbolBinario<Token>
+				raiz = new NodoArbolBinario<Token>(0, auxiliar.getByIndex(1).getContenido()), // raiz
+				primerOperador = new NodoArbolBinario<Token>(0, auxiliar.getByIndex(0).getContenido());
+		raiz.setDerecha(null);
+		raiz.setIzquierda(primerOperador);
+		primerOperador.setPadre(raiz);
+		if(auxiliar.cuentaNodos() > 3) {
+			NodoArbolBinario<Token> restoDeLaExpresion = creaSubArbol(auxiliar, 2, auxiliar.cuentaNodos() - 1);
+			raiz.setDerecha(restoDeLaExpresion);
+		}
+		else {
+			NodoArbolBinario<Token> nodoActual = new NodoArbolBinario<Token>(0, auxiliar.getByIndex(2).getContenido());
+			nodoActual.setPadre(raiz);
+			raiz.setDerecha(nodoActual);
+		}
+		return raiz;
+	}
+	
+	private static void ordenaArbolDeExpresionAlgebraica(ArbolBinario<Token> arbol) {
+		ArbolBinario<Token> auxiliar = new ArbolBinario<Token>(arbol.getLinea(), arbol.getTipo(), arbol.getId());
+		NodoArbolBinario<Token>
+				raiz = new NodoArbolBinario<Token>(0, arbol.getByIndex(1).getContenido()), // raiz
+				primerOperador = new NodoArbolBinario<Token>(0, arbol.getByIndex(0).getContenido());
+		raiz.setIzquierda(primerOperador);
+		primerOperador.setPadre(raiz);
+		int pemdasAnterior = Statics.getPEMDAS(raiz.getContenido().getValor());
+		if(arbol.cuentaNodos() > 3) {
+			NodoArbolBinario<Token> restoDeLaExpresion = creaSubArbol(arbol, 2, arbol.cuentaNodos() - 1);
+			raiz.setDerecha(restoDeLaExpresion);
+		}
+		else {
+			NodoArbolBinario<Token> nodoActual = new NodoArbolBinario<Token>(0, arbol.getByIndex(2).getContenido());
+			nodoActual.setPadre(raiz);
+			raiz.setDerecha(nodoActual);
+		}
+		/*
+		if(arbol.cuentaNodos() > 3)
+			for(int i = 2; i < arbol.cuentaNodos(); i++) {
+				if(i % 2 == 0) { // operando
+					if(arbol.cuentaNodos() > i + 1) {
+						NodoArbolBinario<Token> restoDeLaExpresion = creaSubArbol(arbol, i, arbol.cuentaNodos() - 1);
+						ultimoOperador.setDerecha(restoDeLaExpresion);
+						continue;
+					}
+					NodoArbolBinario<Token> nodoActual = arbol.getByIndex(i);
+					nodoActual.setDerecha(null);
+					nodoActual.setIzquierda(null);
+					nodoActual.setPadre(ultimoOperador);
+					ultimoOperador.setDerecha(nodoActual);
+				}
+				else { // operador
+					int pemdasActual = Statics.getPEMDAS(arbol.getByIndex(i).getContenido().getValor());
+					if(pemdasAnterior >= pemdasActual) {
+						NodoArbolBinario<Token> nodoActual = arbol.getByIndex(i);
+						ultimoOperador.setDerecha(nodoActual);
+						nodoActual.setDerecha(null);
+						nodoActual.setIzquierda(null);
+						nodoActual.setPadre(ultimoOperador);
+//						auxiliar.borrar(0);
+//						auxiliar.insertar(0, arbol.getByIndex(1).getContenido());
+					}
+					else {
+						ultimoOperador.setDerecha(arbol.getByIndex(i));
+//						NodoArbolBinario<Token> operandoDerechoSustituido = auxiliar.getByIndex(auxiliar.cuentaNodos() - 1);
+//						NodoArbolBinario<Token> operandoIzquierdoSustituido = auxiliar.getByIndex(auxiliar.cuentaNodos() - 3);
+//						auxiliar.borrar(i - 3); // operando a la izquierda
+//						auxiliar.insertar(i - 3, arbol.getByIndex(i).getContenido());
+//						auxiliar.borrar(i - 1); // operando a la derecha
+//						auxiliar.insertar(i - 4, operandoDerechoSustituido.getContenido());
+//						auxiliar.insertar(i - 1, operandoIzquierdoSustituido.getContenido());
+//						posicionDelOperadorAnterior = i - 3;
+					}
+					ultimoOperador = arbol.getByIndex(i);
+					pemdasAnterior = pemdasActual;
+				}
+			}
+			*/
+		auxiliar.setRaiz(raiz);
+		auxiliar.recorridoInfijo();
+		arbol = auxiliar;
+	};
 }

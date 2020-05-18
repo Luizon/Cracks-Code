@@ -36,12 +36,15 @@ public class Token
 		this.tipo = tipo;
 	}
 	public String toString() {
+		return "Token " + valor + ": { id: "+id+", linea: "+linea+", tipo: " + Statics.tipoDeToken[tipo] + " }";
+	}
+	public String toStringConSalto() {
 		return "Token " + valor + ":"
-			+ "\n{"
-			+ "\n\tid: "+id+","
-			+ "\n\tlinea: "+linea+","
-			+ "\n\ttipo: " + Statics.tipoDeToken[tipo]
-			+ "\n}";
+				+ "\n{"
+				+ "\n\tid: "+id+","
+				+ "\n\tlinea: "+linea+","
+				+ "\n\ttipo: " + Statics.tipoDeToken[tipo]
+						+ "\n}";
 	}
 	protected String toHTML() {
 		return "Token <b>" + valor + "</b>: {<br />"

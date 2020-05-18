@@ -48,19 +48,19 @@ public class CodePane extends JScrollPane implements DocumentListener {
 		
 		codePane.getDocument().addDocumentListener(this);
 		codePane.setStyledDocument(new CodeDocument(codePane));
-		codePane.addCaretListener(new CaretListener() {
-			@Override
-			public void caretUpdate(CaretEvent e) {
-				int pos = codePane.getCaretPosition();
-	            Element map = codePane.getDocument().getDefaultRootElement();
-	            int row = map.getElementIndex(pos);
-	            Element lineElem = map.getElement(row);
-	            int col = pos - lineElem.getStartOffset();
-	            col++;
-	            row++;
-	            System.out.println("c: "+col+", l: "+row);
-			}
-		});
+//		codePane.addCaretListener(new CaretListener() {
+//			@Override
+//			public void caretUpdate(CaretEvent e) {
+//				int pos = codePane.getCaretPosition();
+//	            Element map = codePane.getDocument().getDefaultRootElement();
+//	            int row = map.getElementIndex(pos);
+//	            Element lineElem = map.getElement(row);
+//	            int col = pos - lineElem.getStartOffset();
+//	            col++;
+//	            row++;
+//	            System.out.println("c: "+col+", l: "+row);
+//			}
+//		});
 	}
 	
 	private String getLineNumbers() {

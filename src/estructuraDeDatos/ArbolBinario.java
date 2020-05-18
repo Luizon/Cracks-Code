@@ -36,6 +36,33 @@ public class ArbolBinario <T> extends Token {
 		}
 	}
 	
+	public boolean borrar(int llave) {
+		if(llave == raiz.getLlave()) {
+			raiz = null;
+			return true;
+		}
+		NodoArbolBinario<T> nodo = raiz;
+		boolean derecha = false;
+		while(llave != nodo.getLlave() && nodo != null) {
+			if(llave < nodo.getLlave()) {
+				nodo = nodo.getIzquierda();
+				derecha = false;
+			}
+			else if(llave > nodo.getLlave()) {
+				nodo = nodo.getDerecha();
+				derecha = true;
+			}
+		}
+		if(llave == nodo.getLlave()) {
+			if(derecha)
+				nodo.getPadre().setDerecha(null);
+			else
+				nodo.getPadre().setIzquierda(null);
+			return true;
+		}
+		return false;
+	}
+	
 	public NodoArbolBinario<T> getByIndex(int index) {
 		return getByIndex(raiz, index);
 	}
@@ -104,7 +131,7 @@ public class ArbolBinario <T> extends Token {
 			else
 				System.out.print("├─");
 			for(int i = 0 ; i < profundidadDeUnNodo(nodo) - profundidadDeLaRaiz; i++)
-				System.out.print("──");
+				System.out.print("────");
 			System.out.println(" Llave: " + nodo.getLlave() + ", valor: " + nodo.getContenido());
 			recorridoInfijo(nodo.getDerecha(), llaveDelUltimoNodo, profundidadDeLaRaiz);
 		}
@@ -125,5 +152,22 @@ public class ArbolBinario <T> extends Token {
 			nodo = nodo.getPadre();
 		}
 		return altura;
+	}
+	
+	public int cuentaNodos() {
+		return cuentaNodos(raiz);
+	}
+	
+	public int cuentaNodos(NodoArbolBinario<T> nodo) {
+		return cuentaNodos(nodo, 0);
+	}
+
+	public int cuentaNodos(NodoArbolBinario<T> nodo, int contador) {
+		if(nodo != null) {
+			contador = cuentaNodos(nodo.getIzquierda(), contador);
+			contador++;
+			contador = cuentaNodos(nodo.getDerecha(), contador);
+		}
+		return contador;
 	}
 }
