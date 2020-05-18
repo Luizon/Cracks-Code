@@ -26,4 +26,4 @@ int e = a;
 //int f = d; // descomentado, marca error, debido a que d ya no existe
 // todo bien
 string quéPex = "todo_nice";
-boolean todoMaravillos = true;}}}
+boolean todoMaravillos = true;

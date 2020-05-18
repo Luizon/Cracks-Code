@@ -20,7 +20,7 @@ public class Ayuda extends JFrame implements FocusListener, KeyListener {
 		super("Ayuda");
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
-		setSize(500, 810);
+		setSize(500, 850);
 		setLocationRelativeTo(null);
 		add(contenido());
 		addFocusListener(this);

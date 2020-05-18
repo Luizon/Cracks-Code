@@ -9,10 +9,10 @@
 - Tampoco acepta métodos ni funciones, pero no vi que fueran obligatorios, sólo vi que quería que se manejara el alcance y para eso bastan las clases y los bloques de código sin clase
 
 ### Los colores en la tabla de símbolo de hecho son una ayuda para saber el alcance en el que están declaradas las variables y clases.
-![Imagen del camino feliz](/img/caminoFeliz.png)
+![Imagen del camino feliz](/img/primerCaminoFeliz.png)
 
 ### Recomiendo dar click a F1 para ver los acortadores antes de manejar el programa, para facilitar su navegación.
-![Imagen los acortadores](/img/ventanaAyuda.png)
+![Imagen los acortadores](/img/nuevaVentanaAyuda.png)
 
 
 -----------------------------------
