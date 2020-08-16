@@ -1,13 +1,7 @@
 # Editor de codigo de los cracks, also proyecto compilador para mi clase de lenguajes y autómatas
 --------------------------------
-# NOTAS
-- El compilador acepta comentarios normales, ponga <b>//</b> y todo lo que le siga a eso en una linea será ignorado por el compilador
-- El compilador no acepta expresiones lógicas
-- Dado el punto anterior, el compilador no acepta if ni while, chanclas xd
-- Tampoco acepta métodos ni funciones, pero no vi que fueran obligatorios, sólo vi que quería que se manejara el alcance y para eso bastan las clases y los bloques de código sin clase
-
-### Los colores en la tabla de símbolo de hecho son una ayuda para saber el alcance en el que están declaradas las variables y clases.
-![Imagen del camino feliz](/img/primerCaminoFeliz.png)
+### Interfaz de usuario.
+![Imagen de la interfaz](/img/GUI.png)
 
 ### Recomiendo dar click a F1 para ver los acortadores antes de manejar el programa, para facilitar su navegación.
 ![Imagen los acortadores](/img/nuevaVentanaAyuda.png)
