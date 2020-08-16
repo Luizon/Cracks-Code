@@ -211,7 +211,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		}
 	}
 	@Override
-	public void keyTyped(KeyEvent key) { // sólo para teclas de escritura; como letras, números, símbolos, etc. No jala con teclas como control, alt, fin, etc.
+	public void keyTyped(KeyEvent key) { // sólo para teclas de escritura; como letras, nÃºmeros, sÃ­mbolos, etc. No jala con teclas como control, alt, fin, etc.
 		int tabs = vista.codigoTabs.getSelectedIndex();
 		String archivoNombre = vista.nombreDelArchivo.getByIndex(tabs).dato;
 		if(teclaControl)

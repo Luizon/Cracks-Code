@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
@@ -41,9 +40,9 @@ public class AnalizadorLexico {
 			}
 			archivoEntrada.close();
 			if(vacio) {
-				String texto = Statics.getHTML("<var><b>Código vacío", Statics.consolaCss);
+				String texto = Statics.getHTML("<var><b>Código vacÃ­o", Statics.consolaCss);
 				listaDeImpresiones.add(texto);
-				System.out.println("Codigo vacío.");
+				System.out.println("Codigo vacÃ­o.");
 			}
 		} catch (FileNotFoundException e) {
 			String texto = Statics.getHTML("No se encontro el archivo favor de checar la ruta <u>"+ruta, "");
@@ -79,9 +78,9 @@ public class AnalizadorLexico {
 		else if(Statics.deArrayEstaticaADinamica(Statics.booleano).contains(strToken)) 
 			tipo = Statics.booleanoInt; // Es una constante booleana
 		else if(Statics.esEntero(strToken)) 
-			tipo = Statics.enteroInt; // Es un número entero
+			tipo = Statics.enteroInt; // Es un nÃºmero entero
 		else if(Statics.esDoble(strToken)) 
-			tipo = Statics.dobleInt; // Es un número doble
+			tipo = Statics.dobleInt; // Es un nÃºmero doble
 		else if(Statics.deArrayEstaticaADinamica(Statics.parentesis).contains(strToken))
 			tipo = Statics.parentesisInt; // Es un parentesis
 		else if(Statics.deArrayEstaticaADinamica(Statics.llave).contains(strToken))
@@ -98,12 +97,12 @@ public class AnalizadorLexico {
 		}
 		
 		if(tipo==-1) { // No es ninguna de arriba
-			// Si entra aquí quiere decir que no es ninguna de las anteriores y paso analizarla letra por letra
+			// Si entra aquÃ­ quiere decir que no es ninguna de las anteriores y paso analizarla letra por letra
 			String caracter = "";
 			boolean bandera = true;
 			for(int i=0; i < strToken.length(); i++) {
 				caracter = strToken.charAt(i) + "";
-				//			 a				  -			z					,			A				-		   Z				 ,   á é í ó ú Á É Í Ó Ú ñ Ñ                        "
+				//			 a				  -			z					,			A				-		   Z				 ,        acento                        "
 				if(!(caracter.hashCode() >= 97 && caracter.hashCode()<=122) && !(caracter.hashCode() >= 65 && caracter.hashCode()<=90) && !esCaracterDelEspañol(caracter) && caracter.hashCode()!=34 && !Statics.esEntero(caracter) && !caracter.equals("_") && !caracter.equals("-")) {
 					bandera = false;
 					break;
