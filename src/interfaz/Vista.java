@@ -51,7 +51,6 @@ import misc.Statics;
 public class Vista extends JFrame implements Serializable {
 	public JMenuBar barraDelMenu;
 	public JMenu menuArchivo,
-		menuCompilar,
 		menuOpciones,
 		menuArchivosRecientes;
 	public JMenuItem nuevoArchivo,
@@ -59,14 +58,11 @@ public class Vista extends JFrame implements Serializable {
 		guardarArchivo,
 		guardarComo,
 		salir,
-		compilarCodigo,
 		cambiarTema,
 		personalizarTema,
 		ayuda,
 		acercaDe;
-	public JSplitPane dividor;
-	public JTabbedPane codigoTabs,
-		bottomTabs;
+	public JTabbedPane codigoTabs;
 	public ListaDoble<JTextPane> txtCodigo;
 	public File archivoTemporal;
 	public ListaDoble<String> rutaDeArchivoActual,
@@ -76,16 +72,11 @@ public class Vista extends JFrame implements Serializable {
 	public ListaDoble<Boolean> cambiosGuardados;
 	public ListaDoble<PanelPestaña> titulo;
 	private ArrayList<String[]> listaArchivosRecientes;
-	public JList<String> consola,
-		cuadruplos;
 	public Escuchadores escuchadores;
 	public int tabulaciones = 0,
 		tema = Theme.CLARO,
 		posicionRelativaDelDividorDeLosTabbedPane = 0;
 	public boolean hayError = false; // hacer algo con esto después, no me gusta
-	public final String [] tituloTabla = new String[]{"Posición", "Alcance", "Tipo", "Simbolo", "Valor"};
-	public DefaultTableModel modelo;
-	public JTable tablaDatos;
 	private final String carpetaDeAppData = System.getenv("APPDATA") + "/Cracks Code/",
 		archivoDeArchivosRecientes = carpetaDeAppData+"recientes.txt",
 		archivoUltimoTemaUsado = carpetaDeAppData+"ultimoTemaUsado.txt",
@@ -130,7 +121,6 @@ public class Vista extends JFrame implements Serializable {
 		cargarUltimoTemaUsado();
 		cargarUltimoTemaPersonalizado();
 		Theme.changeTheme(this);
-		creaFicheroTemporal();
 //		if(!reanudarSesionAnterior()) { // no funciona bien, ya luego lo repararé
 			titulo = new ListaDoble<PanelPestaña>();
 			rutaDeArchivoActual = new ListaDoble<String>();
@@ -141,7 +131,7 @@ public class Vista extends JFrame implements Serializable {
 			txtCodigo = new ListaDoble<JTextPane>();
 			nuevaPestaña();
 //		}
-		crearPestañasDeAbajo();
+		add(codigoTabs);
 		
 		setVisible(true);
 
@@ -266,10 +256,8 @@ public class Vista extends JFrame implements Serializable {
 		String settings = d+"<img src=\"file:/"+Statics.getImage("settings2") + "\">";
 		
 		menuArchivo = new JMenu(Statics.getHTML(folder+"<p>Archivo", css));
-		menuCompilar = new JMenu(Statics.getHTML(run+"<p>Compilar", css));
 		menuOpciones = new JMenu(Statics.getHTML(settings+"<p>Opciones", css));
 		barraDelMenu.add(menuArchivo);
-		barraDelMenu.add(menuCompilar);
 		barraDelMenu.add(menuOpciones);
 		
 		String a = "<br /><span class=\"acortador\">",
@@ -287,8 +275,6 @@ public class Vista extends JFrame implements Serializable {
 		menuArchivosRecientes.setIcon(new ImageIcon(Statics.getImage("recent2")));
 		salir = new JMenuItem(Statics.getHTML(l+"Salir "+a+"(alt+F4)", css));
 		salir.setIcon(new ImageIcon(Statics.getImage("exit2")));
-		compilarCodigo = new JMenuItem(Statics.getHTML(l+"Compilar código "+a+"(F5)", css));
-		compilarCodigo.setIcon(new ImageIcon(Statics.getImage("run2")));
 		cambiarTema = new JMenuItem(Statics.getHTML(l+"Cambiar de tema"+a+"(F11)", css));
 		cambiarTema.setIcon(new ImageIcon(Statics.getImage("theme2")));
 		personalizarTema = new JMenuItem(Statics.getHTML(l+"Personalizar tema"+a+"(F10)", css));
@@ -307,7 +293,6 @@ public class Vista extends JFrame implements Serializable {
 		cargaArchivosRecientes();
 		
 		menuArchivo.add(salir);
-		menuCompilar.add(compilarCodigo);
 		menuOpciones.add(cambiarTema);
 		menuOpciones.add(personalizarTema);
 		menuOpciones.add(ayuda);
@@ -583,61 +568,13 @@ public class Vista extends JFrame implements Serializable {
 		cargaArchivosRecientes();
 	}
 	
-	private void crearPestañasDeAbajo() {
-		bottomTabs = new JTabbedPane();
-		consola = new JList<String>();
-		cuadruplos = new JList<String>();
-		consola.setFont(fuenteConsola);
-		cuadruplos.setFont(fuenteConsola);
-		DefaultListCellRenderer renderer = (DefaultListCellRenderer)cuadruplos.getCellRenderer();
-		renderer.setHorizontalAlignment(SwingConstants.CENTER);
-		JScrollPane pestañaConsola = new JScrollPane(consola);
-		JScrollPane pestañaCuadruplos = new JScrollPane(cuadruplos);
-		modelo = new DefaultTableModel(new Object[0][0], tituloTabla);
-		tablaDatos = new JTable(modelo);
-		tablaDatos.getTableHeader().setFont(fontHeader);
-		JScrollPane pestañaDatos = new JScrollPane(tablaDatos);
-		pestañaConsola.setFocusable(false);
-		pestañaCuadruplos.setFocusable(false);
-		pestañaDatos.setFocusable(false);
-		bottomTabs.insertTab("Consola", icoBug, pestañaConsola, "Consola con información del último código compilado", 0);
-		bottomTabs.insertTab("Datos", icoTable, pestañaDatos, "Tabla con datos guardados del último código compilado", 1);
-		bottomTabs.insertTab("Cuadruplos", icoTable, pestañaCuadruplos, "Tablas de cuadruplos de expresiones encontradas en el último código compilado", 2);
-		
-		dividor = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		posicionRelativaDelDividorDeLosTabbedPane = 300;
-		dividor.setDividerLocation(getHeight()-posicionRelativaDelDividorDeLosTabbedPane);
-        dividor.setTopComponent(codigoTabs);
-		dividor.setBottomComponent(bottomTabs);
-		add(dividor);
-	}
-	
-	private void creaFicheroTemporal() {
-		try {
-			archivoTemporal = File.createTempFile("archivoTemporal",null);
-			archivoTemporal.deleteOnExit();
-		}
-		catch (Exception e) {
-			System.out.println("Error al guardar el archivo temporal para compilar su código.");
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null,"Error al guardar el archivo temporal para compilar su código.","Alerta",JOptionPane.ERROR_MESSAGE);
-		}
-	}
-	
 	private void agregaEscuchadores() {
 		// Evitar que cualquier vaina pueda tener foco, sólo el texto ocupa tener foco, creo yo
 			// El mismo JFrame
 				setFocusable(false);
-			// Paneles de pestañas
-				dividor.setFocusable(false);
-					codigoTabs.setFocusable(false);
-					bottomTabs.setFocusable(false);
+			// Panel de pestañas
+				codigoTabs.setFocusable(false);
 
-			// Paneles de las pestañas
-				tablaDatos.setFocusable(false);
-				consola.setFocusable(false); // la wea de la pestaña Consola
-				cuadruplos.setFocusable(false); // la wea de la pestaña Consola
-				
 			// Los menus
 				menuArchivo.setFocusable(false);
 					nuevoArchivo.setFocusable(false);
@@ -647,8 +584,6 @@ public class Vista extends JFrame implements Serializable {
 					menuArchivosRecientes.setFocusable(false);
 						// los items de este menu son volatiles, se le pone el focusable(false) en el momento que se crean, en cargaArchivosRecientes()
 					salir.setFocusable(false);
-				menuCompilar.setFocusable(false);
-					compilarCodigo.setFocusable(false);
 				menuOpciones.setFocusable(false);
 					cambiarTema.setFocusable(false);
 					personalizarTema.setFocusable(false);
@@ -668,8 +603,6 @@ public class Vista extends JFrame implements Serializable {
 					guardarArchivo.addActionListener(escuchadores);
 					guardarComo.addActionListener(escuchadores);
 					salir.addActionListener(escuchadores);
-				// Compilar
-					compilarCodigo.addActionListener(escuchadores);
 				// Opciones
 					cambiarTema.addActionListener(escuchadores);
 					personalizarTema.addActionListener(escuchadores);
@@ -677,8 +610,6 @@ public class Vista extends JFrame implements Serializable {
 					acercaDe.addActionListener(escuchadores);
 				
 			// Cambio entre pestañas
-				consola.addAncestorListener(escuchadores);
-				tablaDatos.addAncestorListener(escuchadores);
 				codigoTabs.addMouseListener(escuchadores);
 				for(int i=0; i<txtCodigo.length(); i++)
 					txtCodigo.getByIndex(i).dato.addAncestorListener(escuchadores);

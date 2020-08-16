@@ -10,21 +10,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import compilador.AnalizadorLexico;
-import compilador.AnalizadorSemantico;
-import compilador.AnalizadorSintactico;
-import compilador.Identificador;
-import compilador.Token;
 import misc.Statics;
 
 @SuppressWarnings("serial")
@@ -35,26 +27,6 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		teclaAlt = false;
 	public Escuchadores(Vista vista) {
 		this.vista = vista;
-	}
-	private void modificaTitulos() {
-		String consola = "Consola", datos = "Datos";
-		ImageIcon icono = vista.icoDone;
-		if(vista.bottomTabs.getSelectedIndex()==1)
-			consola+= "*";
-		else
-			datos+= "*";
-		if(vista.hayError)
-			icono = vista.icoError;
-		vista.bottomTabs.setIconAt(0, icono);
-		vista.bottomTabs.setTitleAt(0, consola);
-		vista.bottomTabs.setIconAt(1, icono);
-		vista.bottomTabs.setTitleAt(1, datos);
-		
-		int tab = vista.getSelectedTab();
-		if(vista.hayError)
-			vista.titulo.getByIndex(tab).dato.setIcon(icono);
-		else
-			vista.titulo.getByIndex(tab).dato.setIcon(vista.icoCode);
 	}
 	private void cerrarPestaña() {
 		if(teclaControl) {
@@ -89,17 +61,6 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 				break;
 			case KeyEvent.VK_F1:
 				vista.ayuda.doClick();
-				break;
-			case KeyEvent.VK_F2:
-				vista.bottomTabs.setSelectedIndex(0);
-				break;
-			case KeyEvent.VK_F3:
-				vista.bottomTabs.setSelectedIndex(1);
-				break;
-			case KeyEvent.VK_F5:
-				vista.compilarCodigo.doClick();
-				teclaControl = false;
-				teclaShift = false;
 				break;
 			case KeyEvent.VK_F10:
 				vista.personalizarTema.doClick();
@@ -146,16 +107,10 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 					}
 				break;
 			case KeyEvent.VK_ENTER:
-				if(teclaControl && teclaShift)
-					if(vista.bottomTabs.getSelectedIndex() < vista.bottomTabs.getTabCount()-1)
-						vista.bottomTabs.setSelectedIndex(vista.bottomTabs.getSelectedIndex()+1);
-					else
-						vista.bottomTabs.setSelectedIndex(0);
-				else
-					for(int i=0; i<vista.tabulaciones; i++) {
-						final JTextPane aux = vista.txtCodigo.getByIndex(vista.getSelectedTab()-1).dato;
-						aux.setText(aux.getText()+"\t");
-					}
+				for(int i=0; i<vista.tabulaciones; i++) {
+					final JTextPane aux = vista.txtCodigo.getByIndex(vista.getSelectedTab()-1).dato;
+					aux.setText(aux.getText()+"\t");
+				}
 				break;
 			case KeyEvent.VK_CONTROL:
 				teclaControl = true;
@@ -243,31 +198,6 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 		if(evt.getSource() == vista.salir) {
 			System.exit(0);
 		}
-		if(evt.getSource() == vista.compilarCodigo) {
-			for(int i=0; i<50; i++)
-				System.out.print("\n");
-			int tabs = vista.getSelectedTab();
-			String codigoAGuardar = vista.txtCodigo.getByIndex(tabs).dato.getText();
-			Statics.guardarArchivo(vista.archivoTemporal.getAbsolutePath(), codigoAGuardar);
-			ArrayList<Token> tokens = new ArrayList<Token>();
-			ArrayList<String> listaDeImpresiones = new ArrayList<String>(),
-				listaDeCuadruplos = new ArrayList<String>();
-			boolean analisisCorrecto = AnalizadorLexico.analizaCodigoDesdeArchivo(listaDeImpresiones, tokens, vista.archivoTemporal.getAbsolutePath());
-			if(tokens.size() > 1) {
-				if(analisisCorrecto) {
-					analisisCorrecto = AnalizadorSintactico.analizaTokens(listaDeImpresiones, tokens);
-				}
-				if(analisisCorrecto) {
-					analisisCorrecto = AnalizadorSemantico.analizarTokens(listaDeImpresiones, listaDeCuadruplos, tokens, new HashMap<String, Identificador>(), vista.tablaDatos, vista.tituloTabla);
-				}
-			}
-			vista.consola.setListData(Statics.deArrayDinamicaAEstatica(listaDeImpresiones));
-			vista.cuadruplos.setListData(Statics.deArrayDinamicaAEstatica(listaDeCuadruplos));
-			
-			vista.hayError = !analisisCorrecto;
-			modificaTitulos();
-			return;
-		}
 		if(evt.getSource() == vista.personalizarTema) {
 			vista.personalizarTema();
 			return;
@@ -350,26 +280,10 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 
 	@Override
 	public void ancestorAdded(AncestorEvent a) {
-		Object consola = vista.consola,
-			datos = vista.tablaDatos;
-		if(a.getSource().equals(consola) || a.getSource().equals(datos))
-			if(vista.hayError) {
-				vista.bottomTabs.setIconAt(0, vista.icoError);
-				vista.bottomTabs.setTitleAt(0, "Consola");
-				vista.bottomTabs.setIconAt(1, vista.icoError);
-				vista.bottomTabs.setTitleAt(1, "Datos");
-			}
-			else {
-				vista.bottomTabs.setIconAt(0, vista.icoBug);
-				vista.bottomTabs.setTitleAt(0, "Consola");
-				vista.bottomTabs.setIconAt(1, vista.icoTable);
-				vista.bottomTabs.setTitleAt(1, "Datos");
-			}
-
 		int tabs = vista.getSelectedTab();
-		vista.setTitle(vista.tituloVentana.getByIndex(tabs).dato);
-		if(!a.getSource().equals(consola) && !a.getSource().equals(datos))
-			vista.actualizarBotonesDePestañas();
+		String titulo = vista.tituloVentana.getByIndex(tabs).dato;
+		vista.setTitle(titulo);
+		vista.actualizarBotonesDePestañas();
 	}
 	@Override
 	public void ancestorMoved(AncestorEvent a) {

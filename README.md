@@ -1,8 +1,6 @@
 # Editor de codigo de los cracks, also proyecto compilador para mi clase de lenguajes y autómatas
 --------------------------------
 # NOTAS
-- El compilador no acepta modificadores, no intente añadir public o private
-- El tipo <i>string</i> no acepta espacios entre las comillas, en su lugar puede usar <b>_</b>
 - El compilador acepta comentarios normales, ponga <b>//</b> y todo lo que le siga a eso en una linea será ignorado por el compilador
 - El compilador no acepta expresiones lógicas
 - Dado el punto anterior, el compilador no acepta if ni while, chanclas xd
@@ -17,9 +15,7 @@
 
 -----------------------------------
 ## Lista de weas por hacer
-### IMPORTANTES
-- hacer más compleja la forma en que se detectan strings, en el compilador semántico.
-### Secundaros
+- corregir que el / no se coloree si está solo si está junto a otro /. Actualmente se colorea como si fuera un número, es un bug
 - añadir tabulador automático o como se llame
 - añadir teclas ctrl+z y ctrl+y
 - añadir un buscador
@@ -27,6 +23,5 @@
 - hacer un mensaje de bienvenida tipo "¿Es tu primera vez usando Crack's Code, crack?" donde te muestre los atajos del programa y algo de info sobre éste
 - hacer un mensaje más decente en el dialogo <i>Acerca de</i>
 - hacer que los tooltip	sean más bonitos
-- añadir la opción de maximizar y restaurar el panel de pestaña de textos, o de minimizar y maximizar el panel de pestañas de <i>Consola</i> y <i>Datos</i>
 - hacer un guardado de sesión automático, para recargar la última sesión una vez que se vuelva a abrir el programa
 - crear un objeto para manejar un archivo abierto a la vez y hacer una lista de estos objetos, en vez de tener mil listas y montones de métodos en la clase Vista (es la clase de la ventana morro, no de toda la interfaz >:c)
