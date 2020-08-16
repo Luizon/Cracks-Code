@@ -196,6 +196,7 @@ public class Escuchadores implements Serializable, ActionListener, KeyListener, 
 			return;
 		}
 		if(evt.getSource() == vista.salir) {
+			// vista.guardarSesion();
 			System.exit(0);
 		}
 		if(evt.getSource() == vista.personalizarTema) {
